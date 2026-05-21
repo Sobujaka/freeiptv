@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>আমার ফ্রি IP TV</title>
-    <!-- HLS.js Library for M3U8 streaming -->
+    <title>আমার অটোমেটিক IP TV প্লেয়ার</title>
+    <!-- HLS.js for Live Streaming -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     
     <style>
@@ -27,7 +27,7 @@
         h1 {
             margin: 10px 0;
             font-size: 24px;
-            color: #ff4757;
+            color: #00ec47;
             background: none;
         }
 
@@ -54,13 +54,13 @@
             width: 100%;
             max-width: 800px;
             display: grid;
-            grid-template-columns: repeat(5, 1fr); /* প্রতি লাইনে ৫টি */
+            grid-template-columns: repeat(5, 1fr);
             gap: 12px;
             padding: 10px 0;
             background: none;
         }
 
-        /* চ্যানেল বাটন স্টাইল */
+        /* অটোমেটিক তৈরি হওয়া চ্যানেল কার্ডের স্টাইল */
         .channel-card {
             background: #222;
             border: 1px solid #444;
@@ -72,9 +72,13 @@
         }
 
         .channel-card:hover {
-            background: #ff4757;
-            border-color: #ff4757;
+            background: #00ec47;
+            border-color: #00ec47;
             transform: translateY(-3px);
+        }
+        
+        .channel-card:hover p {
+            color: #000;
         }
 
         .channel-card img {
@@ -94,66 +98,111 @@
             overflow: hidden;
         }
 
-        /* মোবাইল স্ক্রিনের জন্য রেসপনসিভ (মোবাইলে প্রতি লাইনে ৩টি দেখাবে) */
+        #loading {
+            font-size: 18px;
+            color: #ffb300;
+            margin-top: 20px;
+            background: none;
+        }
+
+        /* মোবাইল রেসপনসিভ (মোবাইলে প্রতি লাইনে ৩টি দেখাবে) */
         @media (max-width: 600px) {
             .channel-container {
                 grid-template-columns: repeat(3, 1fr);
                 gap: 8px;
             }
             h1 { font-size: 18px; }
-            .channel-card p { font-size: 11px; }
         }
     </style>
 </head>
 <body>
 
-    <h1>লাইভ আইপি টিভি প্লেয়ার</h1>
+    <h1>আমার লাইভ আইপি টিভি</h1>
 
     <!-- ১. ভিডিও প্লেয়ার (ওপরে) -->
     <div class="player-container">
         <video id="video-player" controls autoplay poster="https://via.placeholder.com/800x450?text=Select+a+Channel"></video>
     </div>
 
-    <!-- ২. চ্যানেল লিস্ট (নিচে) -->
-    <div class="channel-container">
-        
-        <!-- চ্যানেল ১ -->
-        <div class="channel-card" onclick="playChannel('https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4')">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/2/28/HelloWorld.svg" alt="Ch 1">
-            <p>চ্যানেল ১ (টেস্ট)</p>
-        </div>
+    <!-- লোডিং মেসেজ -->
+    <div id="loading">চ্যানেল লোড হচ্ছে, দয়া করে অপেক্ষা করুন...</div>
 
-        <!-- চ্যানেল ২ (এখানে আপনার আসল m3u8 লিংক বসান) -->
-        <div class="channel-card" onclick="playChannel('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">
-            <img src="https://via.placeholder.com/50" alt="Ch 2">
-            <p>চ্যানেল ২ (M3U8)</p>
-        </div>
+    <!-- ২. চ্যানেল লিস্ট (নিচে - এখানে অটোমেটিক তৈরি হবে) -->
+    <div class="channel-container" id="channel-list"></div>
 
-        <!-- চ্যানেল ৩ -->
-        <div class="channel-card" onclick="playChannel('আপনার_M3U_বা_M3U8_লিংক_এখানে')">
-            <img src="https://via.placeholder.com/50" alt="Ch 3">
-            <p>চ্যানেল ৩</p>
-        </div>
-
-        <!-- চ্যানেল ৪ -->
-        <div class="channel-card" onclick="playChannel('আপনার_M3U_বা_M3U8_লিংক_এখানে')">
-            <img src="https://via.placeholder.com/50" alt="Ch 4">
-            <p>চ্যানেল ৪</p>
-        </div>
-
-        <!-- চ্যানেল ৫ -->
-        <div class="channel-card" onclick="playChannel('আপনার_M3U_বা_M3U8_লিংক_এখানে')">
-            <img src="https://via.placeholder.com/50" alt="Ch 5">
-            <p>চ্যানেল ৫</p>
-        </div>
-
-        <!-- আপনি চাইলে নিচে একইভাবে আরও চ্যানেল কার্ড (div) কপি-পেস্ট করে বাড়াতে পারেন -->
-
-    </div>
-
-    <!-- জাভাস্ক্রিপ্ট দিয়ে চ্যানেল প্লে করার লজিক -->
     <script>
-        function playChannel(url) {
+        // 🛠️ আপনার দেওয়া M3U লিংকটি এখানে সেট করা হয়েছে
+        const m3uUrl = 'https://raw.githubusercontent.com/Sobujaka/m3u-player/refs/heads/main/remaining_channels.m3u'; 
+
+        // M3U ফাইলটি রিড করার ফাংশন
+        async function fetchM3U() {
+            try {
+                const response = await fetch(m3uUrl);
+                if (!response.ok) throw new Error('Network error');
+                const text = await response.text();
+                parseM3U(text);
+            } catch (error) {
+                document.getElementById('loading').innerText = "চ্যানেল লোড করতে সমস্যা হয়েছে! লিংকটি চেক করুন বা CORS সমস্যা হতে পারে।";
+                console.error(error);
+            }
+        }
+
+        // M3U টেক্সট থেকে চ্যানেল আলাদা করার লজিক
+        function parseM3U(data) {
+            const lines = data.split('\n');
+            const channels = [];
+            let currentChannel = {};
+
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+
+                if (line.startsWith('#EXTINF:')) {
+                    // চ্যানেলের নাম বের করা
+                    const nameMatch = line.split(',')[1];
+                    currentChannel.name = nameMatch ? nameMatch.trim() : "Unknown Channel";
+
+                    // লোগো বা আইকন বের করা
+                    const logoMatch = line.match(/tvg-logo="([^"]+)"/);
+                    currentChannel.logo = logoMatch ? logoMatch[1] : "https://via.placeholder.com/50?text=TV";
+                } 
+                else if (line.startsWith('http')) {
+                    // চ্যানেলের স্ট্রিম লিংক
+                    currentChannel.url = line;
+                    channels.push(currentChannel);
+                    currentChannel = {}; // নতুন চ্যানেলের জন্য খালি করা
+                }
+            }
+
+            displayChannels(channels);
+        }
+
+        // স্ক্রিনে ৫টি করে চ্যানেল সাজানো
+        function displayChannels(channels) {
+            const container = document.getElementById('channel-list');
+            document.getElementById('loading').style.display = 'none'; // লোডিং বন্ধ করা
+
+            if(channels.length === 0) {
+                document.getElementById('loading').innerText = "কোনো চ্যানেল পাওয়া যায়নি।";
+                document.getElementById('loading').style.display = 'block';
+                return;
+            }
+
+            channels.forEach(channel => {
+                const card = document.createElement('div');
+                card.className = 'channel-card';
+                // ক্লিকে প্লে হবে
+                card.onclick = () => playStream(channel.url);
+
+                card.innerHTML = `
+                    <img src="${channel.logo}" onerror="this.src='https://via.placeholder.com/50?text=TV'">
+                    <p>${channel.name}</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // ভিডিও প্লে করার ফাংশন
+        function playStream(url) {
             const video = document.getElementById('video-player');
             
             if (Hls.isSupported()) {
@@ -164,7 +213,6 @@
                     video.play();
                 });
             } 
-            // কিছু ব্রাউজারে (যেমন আইফোন/সাফারি) এইচএলএস সরাসরি চলে
             else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = url;
                 video.addEventListener('loadedmetadata', function() {
@@ -174,6 +222,9 @@
                 alert("আপনার ব্রাউজারে এই লিংকটি সাপোর্ট করছে না।");
             }
         }
+
+        // পেজ লোড হলেই M3U থেকে ডাটা আনা শুরু হবে
+        fetchM3U();
     </script>
 
 </body>
