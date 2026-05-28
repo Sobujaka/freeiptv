@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jahangir IPTV Multi-Digit HD Player</title>
+    <title>Jahangir IPTV Ultimate HD Player</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -16,27 +16,28 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
         
-        /* Premium Player No Breaking Text */
-        .video-js { font-family: sans-serif !important; color: #fff !important; }
+        /* Force Video Player to take Maximum Area without Text Overlap */
+        .video-js { font-family: sans-serif !important; color: #fff !important; width: 100% !important; height: 100% !important; }
         .video-js .vjs-big-play-button { background-color: rgba(99, 102, 241, 0.8) !important; border-radius: 50% !important; width: 2.5em !important; height: 2.5em !important; line-height: 2.5em !important; margin-top: -1.25em !important; margin-left: -1.25em !important; border: none !important; }
+        .vjs-control-bar { background-color: rgba(15, 23, 42, 0.85) !important; backdrop-filter: blur(8px); }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans h-screen flex flex-col overflow-hidden select-none">
 
     <header class="bg-slate-900 border-b border-slate-800 px-6 py-3 flex flex-wrap items-center justify-between shrink-0 gap-4 z-20">
         <div class="flex items-center gap-3">
-            <i class="fa-solid fa-wand-magic-sparkles text-indigo-500 text-2xl animate-pulse"></i>
-            <h1 class="text-xl font-bold tracking-wide text-white">Smart <span class="text-indigo-400">IPTV Pro HD</span></h1>
+            <i class="fa-solid fa-play text-indigo-500 text-xl animate-pulse"></i>
+            <h1 class="text-lg font-bold tracking-wide text-white">Smart <span class="text-indigo-400">IPTV Cinema Engine</span></h1>
         </div>
 
         <div class="flex items-center gap-3 flex-wrap">
-            <label class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-lg cursor-pointer transition-all flex items-center gap-2 shadow-lg">
-                <i class="fa-solid fa-file-import"></i> Upload M3U/M3U8
+            <label class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-lg cursor-pointer transition-all flex items-center gap-2 shadow-lg shadow-indigo-600/20">
+                <i class="fa-solid fa-file-import"></i> Upload M3U List
                 <input type="file" id="m3uUploader" accept=".m3u,.m3u8" class="hidden">
             </label>
             
             <button onclick="deleteCurrentDeadChannel()" class="bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white border border-rose-500/30 text-xs font-bold px-4 py-2 rounded-lg transition-all flex items-center gap-2">
-                <i class="fa-solid fa-trash-can"></i> Delete Dead Channel
+                <i class="fa-solid fa-trash-can"></i> Remove Dead Link
             </button>
 
             <button onclick="downloadCleanM3U()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition-all flex items-center gap-2 shadow-lg">
@@ -47,50 +48,44 @@
 
     <div class="flex flex-1 overflow-hidden relative">
         
-        <aside class="w-52 bg-slate-900/90 border-r border-slate-800 flex flex-col shrink-0 z-10">
-            <div class="p-4 border-b border-slate-800">
-                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Categories</h2>
-            </div>
-            <div id="groupList" class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
-                <div class="text-xs text-slate-600 p-2 text-center">Upload file first</div>
-            </div>
-        </aside>
-
-        <div class="w-[28%] min-w-[280px] hidden md:flex flex-col bg-slate-950 border-r border-slate-800 p-4 overflow-hidden z-10">
-            <div class="flex items-center justify-between mb-4">
-                <h2 id="currentCategoryTitle" class="text-sm font-bold text-slate-300 flex items-center gap-2 truncate">
-                    <i class="fa-solid fa-layer-group text-indigo-400"></i> Channels
-                </h2>
-                <span id="channelCount" class="text-[11px] bg-slate-900 text-indigo-300 px-2 py-0.5 rounded border border-indigo-950 font-mono">0</span>
+        <div class="w-64 lg:w-72 bg-slate-900 border-r border-slate-800 flex flex-col shrink-0 z-10 overflow-hidden">
+            <div class="p-3 border-b border-slate-800 bg-slate-900/50 flex justify-between items-center">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Playlists</span>
+                <span id="channelCount" class="text-[11px] bg-slate-950 text-indigo-400 px-2 py-0.5 rounded border border-slate-800 font-mono font-bold">0</span>
             </div>
             
-            <div id="channelsGrid" class="flex-1 overflow-y-auto custom-scrollbar grid grid-cols-1 xl:grid-cols-2 gap-2 content-start pb-4">
-                <div class="col-span-full py-12 text-center text-slate-600 text-xs">
-                    <i class="fa-solid fa-file-code text-3xl mb-2 block text-slate-700"></i>
-                    Please upload an .m3u playlist.
+            <div id="groupContainer" class="p-2 border-b border-slate-800 hidden bg-slate-950">
+                <select id="groupSelect" onchange="filterCategory(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-xs text-white focus:outline-none focus:border-indigo-500"></select>
+            </div>
+
+            <div id="channelsGrid" class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1 bg-slate-950">
+                <div class="py-12 text-center text-slate-600 text-xs px-4">
+                    <i class="fa-solid fa-arrow-up text-2xl mb-2 text-indigo-500/30 block animate-bounce"></i>
+                    Upload your .m3u playlist file to activate channels list.
                 </div>
             </div>
         </div>
 
         <main class="flex-1 bg-black flex flex-col relative justify-center items-center overflow-hidden">
             
-            <div id="channelOverlay" class="absolute top-6 left-6 bg-slate-900/90 backdrop-blur-md border-2 border-indigo-500/40 px-5 py-3 rounded-2xl flex items-center gap-4 z-30 opacity-0 pointer-events-none transition-all duration-300 shadow-2xl">
-                <div class="text-2xl font-black font-mono text-indigo-400" id="overlayNumber">00</div>
+            <div id="channelOverlay" class="absolute top-6 left-6 bg-slate-900/95 backdrop-blur-md border border-indigo-500/50 px-5 py-3 rounded-2xl flex items-center gap-4 z-30 opacity-0 pointer-events-none transition-all duration-300 shadow-2xl">
+                <div class="text-3xl font-black font-mono text-indigo-400" id="overlayNumber">00</div>
                 <div class="h-8 w-[1px] bg-slate-700"></div>
-                <div class="text-base font-bold text-white" id="overlayName">Loading...</div>
+                <div class="text-base font-bold text-white tracking-wide" id="overlayName">Loading...</div>
             </div>
 
-            <div id="typingOverlay" class="absolute bg-indigo-600 text-white font-mono font-black text-3xl px-6 py-3 rounded-full z-40 shadow-2xl bottom-10 animate-bounce hidden">
-                CH: <span id="typingNumber"></span>
+            <div id="typingOverlay" class="absolute bg-indigo-600 border-2 border-indigo-400 text-white font-mono font-black text-4xl px-8 py-4 rounded-2xl z-40 shadow-2xl transform transition-all scale-100 hidden">
+                <span class="text-xs text-indigo-200 block font-sans font-semibold tracking-wider uppercase mb-1">Typing Channel</span>
+                CH <span id="typingNumber" class="text-yellow-300"></span>
             </div>
 
-            <div class="w-full h-full flex items-center justify-center relative">
-                <div id="playerPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 p-4 text-center bg-gradient-to-b from-slate-900 to-slate-950 z-10">
-                    <div class="w-16 h-16 bg-indigo-600/10 border border-indigo-500/20 rounded-full flex items-center justify-center mb-4 shadow-xl">
-                        <i class="fa-solid fa-tv text-2xl text-indigo-400"></i>
+            <div class="w-full h-full flex items-center justify-center relative bg-black">
+                <div id="playerPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 p-6 text-center bg-gradient-to-b from-slate-900 via-slate-950 to-black z-10">
+                    <div class="w-20 h-20 bg-indigo-600/10 border border-indigo-500/20 rounded-full flex items-center justify-center mb-4 shadow-2xl shadow-indigo-500/10">
+                        <i class="fa-solid fa-tv text-3xl text-indigo-400 animate-pulse"></i>
                     </div>
-                    <p class="text-sm font-bold text-slate-200">Huge Cinema Display Ready</p>
-                    <p class="text-xs text-slate-500 mt-1 max-w-xs">Upload playlist then type channel number directly (e.g. 1, 12, 105) using keyboard digits.</p>
+                    <p class="text-lg font-bold text-slate-200">Max Engine Ready</p>
+                    <p class="text-xs text-slate-500 mt-2 max-w-sm leading-relaxed">Directly type any multi-digit channel numbers like <span class="text-indigo-400 font-bold font-mono">12</span>, <span class="text-indigo-400 font-bold font-mono">13</span>, or <span class="text-indigo-400 font-bold font-mono">105</span> sequence on your keyboard to test.</p>
                 </div>
                 
                 <video id="iptv-player" class="video-js vjs-default-skin w-full h-full object-contain" controls preload="auto"></video>
@@ -105,200 +100,219 @@
         let activeChannelId = null;
         let player;
 
-        // Multi-digit Keyboard buffer globals
-        let inputBuffer = "";
-        let typingTimeout = null;
+        // Smart Buffer Controls for Dual/Multi-digit (12, 13 etc.)
+        let keyBuffer = "";
+        let bufferTimeout = null;
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Setup Full Screen Video Object Layout
             player = videojs('iptv-player', {
-                html5: { vhs: { overrideNative: true } }
+                html5: { vhs: { overrideNative: true } },
+                fluid: false,
+                aspectRatio: undefined
             });
 
             document.getElementById('m3uUploader').addEventListener('change', handleFileSelect);
 
-            // ⌨️ MULTI-DIGIT ADVANCED KEYBOARD REMOTE SYSTEM (Fixes 12, 13, 105)
+            // ⌨️ ACCURATE KEYBOARD BUFFER REMOTE ENGINE FOR DUAL & TRIPLE DIGITS
             document.addEventListener('keydown', (e) => {
-                // Ignore if any textfield active
-                if (document.activeElement.tagName === 'INPUT') return;
+                if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT') return;
 
-                // Check if pressed key is a number (0-9)
+                // Validate if key pressed is numerical integer character
                 if (e.key >= '0' && e.key <= '9') {
-                    clearTimeout(typingTimeout);
-                    inputBuffer += e.key;
+                    clearTimeout(bufferTimeout);
+                    keyBuffer += e.key;
 
-                    // Show visual responsive badge on screen
+                    // Trigger and flash the Typing Overlay Center Box
                     const typeBox = document.getElementById('typingOverlay');
-                    document.getElementById('typingNumber').innerText = inputBuffer;
+                    document.getElementById('typingNumber').innerText = keyBuffer;
                     typeBox.classList.remove('hidden');
 
-                    // Wait 1.2 seconds for full typing loop to finish
-                    typingTimeout = setTimeout(() => {
-                        executeBufferChannelChange(inputBuffer);
-                        inputBuffer = ""; // Reset buffer
+                    // Wait exactly 1.5 seconds window so user can finish typing '1' then '2'
+                    bufferTimeout = setTimeout(() => {
+                        triggerChannelByBufferedString(keyBuffer);
+                        keyBuffer = ""; // Flush buffer array string
                         typeBox.classList.add('hidden');
-                    }, 1200);
+                    }, 1500);
                 }
             });
         });
 
-        // Search and change via typed string
-        function executeBufferChannelChange(targetNumber) {
-            // Find accurate matched channel number string mapping
-            const foundChannel = channels.find(ch => String(ch.number) === String(parseInt(targetNumber)));
-            if (foundChannel) {
-                playChannel(foundChannel.id);
+        // Search precise match mapping inside loaded array
+        function triggerChannelByBufferedString(typedNum) {
+            const parsedTarget = String(parseInt(typedNum, 10));
+            const matchedObj = channels.find(ch => String(ch.number) === parsedTarget);
+            
+            if (matchedObj) {
+                playChannel(matchedObj.id);
             } else {
-                alert(`Channel number ${targetNumber} not found inside list!`);
+                alert(`Channel Number ${parsedTarget} not found inside your uploaded playlist!`);
             }
         }
 
-        // --- Core M3U File Reader & Parser ---
+        // --- M3U Array String FileReader Engine ---
         function handleFileSelect(event) {
             const file = event.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                parseM3U(e.target.result);
+                parseM3UPlaylistData(e.target.result);
             };
             reader.readAsText(file);
         }
 
-        function parseM3U(data) {
-            const lines = data.split('\n');
+        function parseM3UPlaylistData(textRaw) {
+            const lines = textRaw.split('\n');
             channels = [];
-            let currentItem = null;
-            let chCounter = 1;
+            let tempItem = null;
+            let countIndex = 1;
 
             for (let i = 0; i < lines.length; i++) {
                 let line = lines[i].trim();
 
                 if (line.startsWith('#EXTINF:')) {
-                    currentItem = {};
-                    currentItem.id = chCounter;
-                    currentItem.number = String(chCounter);
+                    tempItem = {};
+                    tempItem.id = countIndex;
+                    tempItem.number = String(countIndex); // Assigned indexed integer sequence mapping
                     
                     const logoMatch = line.match(/tvg-logo="([^"]+)"/);
                     const groupMatch = line.match(/group-title="([^"]+)"/);
                     
-                    currentItem.logo = logoMatch ? logoMatch[1] : "";
-                    currentItem.group = groupMatch ? groupMatch[1] : "Uncategorized";
+                    tempItem.logo = logoMatch ? logoMatch[1] : "";
+                    tempItem.group = groupMatch ? groupMatch[1] : "General Channels";
                     
-                    const commaIndex = line.lastIndexOf(',');
-                    currentItem.name = commaIndex !== -1 ? line.substring(commaIndex + 1).trim() : "Unknown Channel";
+                    const commaIdx = line.lastIndexOf(',');
+                    tempItem.name = commaIdx !== -1 ? line.substring(commaIdx + 1).trim() : "Unnamed Stream";
                     
-                } else if (line.startsWith('http') && currentItem) {
-                    currentItem.url = line;
-                    channels.push(currentItem);
-                    currentItem = null;
-                    chCounter++;
+                } else if (line.startsWith('http') && tempItem) {
+                    tempItem.url = line;
+                    channels.push(tempItem);
+                    tempItem = null;
+                    countIndex++;
                 }
             }
 
             selectedCategory = "All";
-            renderGroups();
-            renderChannels();
+            setupDropdownSelector();
+            renderChannelsList();
         }
 
-        // Render Groups
-        function renderGroups() {
-            const groupList = document.getElementById('groupList');
-            if(channels.length === 0) {
-                groupList.innerHTML = `<div class="text-xs text-slate-600 p-2 text-center">No data</div>`;
+        // Build HTML Select drop down options for massive category files
+        function setupDropdownSelector() {
+            const container = document.getElementById('groupContainer');
+            const select = document.getElementById('groupSelect');
+            
+            if (channels.length === 0) {
+                container.classList.add('hidden');
                 return;
             }
-
-            const groups = ['All', ...new Set(channels.map(ch => ch.group))];
-            groupList.innerHTML = groups.map(group => {
-                const isActive = selectedCategory === group;
-                const count = group === 'All' ? channels.length : channels.filter(c => c.group === group).length;
-                
-                return `
-                    <button onclick="filterCategory('${group}')" class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-200 text-left ${isActive ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'}">
-                        <span class="truncate pr-1">${group}</span>
-                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-950/50 text-slate-400">${count}</span>
-                    </button>
-                `;
+            
+            container.classList.remove('hidden');
+            const uniqueGroups = ['All', ...new Set(channels.map(ch => ch.group))];
+            
+            select.innerHTML = uniqueGroups.map(grp => {
+                const total = grp === 'All' ? channels.length : channels.filter(c => c.group === grp).length;
+                return `<option value="${grp}">${grp} (${total})</option>`;
             }).join('');
         }
 
-        function filterCategory(category) {
-            selectedCategory = category;
-            document.getElementById('currentCategoryTitle').innerText = category;
-            renderGroups();
-            renderChannels();
+        function filterCategory(val) {
+            selectedCategory = val;
+            renderChannelsList();
         }
 
-        // Render Channels
-        function renderChannels() {
-            const grid = document.getElementById('channelsGrid');
-            const filteredChannels = channels.filter(ch => selectedCategory === 'All' || ch.group === selectedCategory);
+        // Render Compact Sidebar Lists
+        function renderChannelsList() {
+            const targetGrid = document.getElementById('channelsGrid');
+            const filtered = channels.filter(ch => selectedCategory === 'All' || ch.group === selectedCategory);
 
-            document.getElementById('channelCount').innerText = filteredChannels.length;
+            document.getElementById('channelCount').innerText = filtered.length;
 
-            if(filteredChannels.length === 0) {
-                grid.innerHTML = `<div class="col-span-full py-8 text-center text-slate-600 text-xs">Empty</div>`;
+            if (filtered.length === 0) {
+                targetGrid.innerHTML = `<div class="text-center py-6 text-slate-600 text-xs">Empty Group</div>`;
                 return;
             }
 
-            grid.innerHTML = filteredChannels.map(channel => {
-                const isCurrent = activeChannelId === channel.id;
+            targetGrid.innerHTML = filtered.map(ch => {
+                const isActive = activeChannelId === ch.id;
                 return `
-                    <div onclick="playChannel(${channel.id})" class="bg-slate-900 border ${isCurrent ? 'border-indigo-500 bg-slate-850' : 'border-slate-800/80'} hover:border-indigo-500 rounded-xl p-2 flex items-center gap-2.5 cursor-pointer hover:bg-slate-850 transition-all duration-150 group">
-                        <div class="w-9 h-9 bg-slate-950 rounded-lg p-1 flex items-center justify-center shrink-0 border border-slate-800">
-                            <img src="${channel.logo}" alt="" onerror="this.src='https://placehold.co/80x80/1e293b/cbd5e1?text=TV'" class="max-w-full max-h-full object-contain">
+                    <div onclick="playChannel(${ch.id})" class="bg-slate-900/60 border ${isActive ? 'border-indigo-500 bg-slate-900' : 'border-slate-800/60'} hover:border-indigo-500/70 rounded-xl p-2 flex items-center gap-3 cursor-pointer hover:bg-slate-900 transition-all duration-150 group">
+                        <div class="w-8 h-8 bg-slate-950 rounded border border-slate-800 p-1 flex items-center justify-center shrink-0">
+                            <img src="${ch.logo}" alt="" onerror="this.src='https://placehold.co/80x80/0f172a/cbd5e1?text=Live'" class="max-w-full max-h-full object-contain">
                         </div>
                         <div class="overflow-hidden flex-1">
-                            <div class="text-[9px] font-mono text-indigo-400 font-bold">CH ${channel.number}</div>
-                            <h3 class="text-xs font-bold text-slate-200 truncate group-hover:text-white">${channel.name}</h3>
+                            <div class="text-[9px] font-mono font-bold text-indigo-400">CH ${ch.number}</div>
+                            <h3 class="text-xs font-bold text-slate-300 truncate group-hover:text-white">${ch.name}</h3>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        // Core Stream Play Function
-        function playChannel(id) {
-            const channel = channels.find(c => c.id === id);
-            if(!channel) return;
+        // Active Play Control Pipeline
+        function playChannel(targetId) {
+            const chObj = channels.find(c => c.id === targetId);
+            if (!chObj) return;
 
-            activeChannelId = id;
+            activeChannelId = targetId;
             document.getElementById('playerPlaceholder').classList.add('hidden');
             
+            // Set Dynamic Stream engine details
             player.src({
-                src: channel.url,
+                src: chObj.url,
                 type: 'application/x-mpegURL'
             });
             player.play();
-            renderChannels();
+            renderChannelsList();
 
-            // Overlay Flash Notification
-            const overlay = document.getElementById('channelOverlay');
-            document.getElementById('overlayNumber').innerText = channel.number;
-            document.getElementById('overlayName').innerText = channel.name;
-            overlay.classList.remove('opacity-0', 'pointer-events-none');
-            overlay.classList.add('opacity-100');
+            // Flash Screen Header Info Overlay Banner
+            const notificationBox = document.getElementById('channelOverlay');
+            document.getElementById('overlayNumber').innerText = chObj.number;
+            document.getElementById('overlayName').innerText = chObj.name;
+            
+            notificationBox.classList.remove('opacity-0', 'pointer-events-none');
+            notificationBox.classList.add('opacity-100');
             
             setTimeout(() => {
-                overlay.classList.remove('opacity-100');
-                overlay.classList.add('opacity-0', 'pointer-events-none');
-            }, 2500);
+                notificationBox.classList.remove('opacity-100');
+                notificationBox.classList.add('opacity-0', 'pointer-events-none');
+            }, 3000);
         }
 
-        // Remove Dead Channels
+        // Functional Command: Delete Active stream from workspace pool array
         function deleteCurrentDeadChannel() {
             if (!activeChannelId) {
-                alert("Please play a channel first!");
+                alert("Please click or play a channel first!");
                 return;
             }
             channels = channels.filter(ch => ch.id !== activeChannelId);
             activeChannelId = null;
+            
             player.reset();
             document.getElementById('playerPlaceholder').classList.remove('hidden');
-            renderGroups();
-            renderChannels();
+            
+            setupDropdownSelector();
+            renderChannelsList();
         }
 
-        // Download Clean File
+        // Functional Command: Export modified clean M3U file text bundle
         function downloadCleanM3U() {
-            if (channels.length === 0) return
+            if (channels.length === 0) return;
+            let textOutput = "#EXTM3U\n";
+            channels.forEach(ch => {
+                textOutput += `#EXTINF:-1 tvg-id="" tvg-logo="${ch.logo}" group-title="${ch.group}",${ch.name}\n${ch.url}\n`;
+            });
+            
+            const fileBlob = new Blob([textOutput], { type: 'text/plain' });
+            const tempUrl = URL.createObjectURL(fileBlob);
+            const downloadTrigger = document.createElement('a');
+            downloadTrigger.href = tempUrl;
+            downloadTrigger.download = 'Clean_Cinema_Playlist.m3u';
+            document.body.appendChild(downloadTrigger);
+            downloadTrigger.click();
+            document.body.removeChild(downloadTrigger);
+        }
+    </script>
+</body>
+</html>
