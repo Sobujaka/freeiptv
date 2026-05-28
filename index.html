@@ -88,13 +88,32 @@
 
     <script>
         // --- Channels Database ---
+        // আপনার দেওয়া নতুন কার্টুন নেটওয়ার্ক চ্যানেলটি এখানে প্রথম আইটেম হিসেবে যুক্ত করা হয়েছে।
         const channels = [
-            { id: 1, number: "101", name: "Somoy TV", group: "News", logo: "https://www.somoynews.tv/themes/somoy/images/logo.png", url: "https://example.com/live/somoy.m3u8" },
-            { id: 2, number: "102", name: "Independent TV", group: "News", logo: "https://upload.wikimedia.org/wikipedia/en/2/2c/Independent_Television_logo.png", url: "https://example.com/live/independent.m3u8" },
-            { id: 3, number: "201", name: "Sony Sports 1", group: "Sports", logo: "https://upload.wikimedia.org/wikipedia/commons/2/23/Sony_Sports_Network_logo.png", url: "https://example.com/live/sonysports1.m3u8" },
-            { id: 4, number: "202", name: "T Sports", group: "Sports", logo: "https://upload.wikimedia.org/wikipedia/en/e/ed/TSports_logo.png", url: "https://example.com/live/tsports.m3u8" },
-            { id: 5, number: "301", name: "Cartoon Network", group: "Kids", logo: "https://upload.wikimedia.org/wikipedia/commons/b/bb/Cartoon_Network_2010_logo.svg", url: "https://example.com/live/cn.m3u8" },
-            { id: 6, number: "401", name: "HBO HD", group: "Movies", logo: "https://upload.wikimedia.org/wikipedia/commons/d/de/HBO_logo.svg", url: "https://example.com/live/hbo.m3u8" }
+            { 
+                id: 1, 
+                number: "01", 
+                name: "Cartoon Network", 
+                group: "Kids", 
+                logo: "https://i.ibb.co.com/8B0Lpzd/1000021166.png", 
+                url: "https://vodzong.mjunoon.tv:8087/streamtest/cartoon-network-87/playlist.m3u8" 
+            },
+            { 
+                id: 2, 
+                number: "02", 
+                name: "Somoy TV (Demo)", 
+                group: "News", 
+                logo: "https://www.somoynews.tv/themes/somoy/images/logo.png", 
+                url: "https://example.com/live/somoy.m3u8" 
+            },
+            { 
+                id: 3, 
+                number: "03", 
+                name: "Sony Sports 1 (Demo)", 
+                group: "Sports", 
+                logo: "https://upload.wikimedia.org/wikipedia/commons/2/23/Sony_Sports_Network_logo.png", 
+                url: "https://example.com/live/sonysports1.m3u8" 
+            }
         ];
 
         let selectedCategory = "All";
