@@ -3,264 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>আমার IPTV প্লেয়ার</title>
+    <title>IPTV Web Player</title>
+    <!-- Video.js CSS for smooth streaming -->
     <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-color: #3b82f6;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
         }
 
         body {
-            background-color: #11141a;
-            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
             padding: 20px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        header h1 {
-            color: #00ff88;
-            font-size: 2rem;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
         }
 
-        /* প্লেয়ার সেকশন */
-        .player-section {
-            background-color: #1a1f29;
-            padding: 15px;
+        h1 {
+            text-align: center;
+            color: var(--text-color);
+            margin-bottom: 25px;
+        }
+
+        /* Player Section */
+        .player-wrapper {
+            margin-bottom: 30px;
+            background: #000;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-
-        .video-container {
-            position: relative;
-            padding-top: 56.25%; /* 16:9 Aspect Ratio */
-            border-radius: 8px;
             overflow: hidden;
-            background-color: #000;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
         }
 
         .video-js {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100% !important;
-            height: 100% !important;
-        }
-
-        .current-channel-info {
-            margin-top: 15px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #00ff88;
-        }
-
-        /* চ্যানেল লিস্ট ও সার্চ সেকশন */
-        .channel-section {
-            background-color: #1a1f29;
-            padding: 20px;
-            border-radius: 12px;
-        }
-
-        .channel-header {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        @media (min-width: 480px) {
-            .channel-header {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-        }
-
-        .channel-section h2 {
-            font-size: 1.4rem;
-            border-left: 4px solid #00ff88;
-            padding-left: 10px;
-        }
-
-        /* সার্চ বক্স স্টাইল */
-        .search-container {
-            position: relative;
             width: 100%;
-            max-width: 250px;
+            aspect-ratio: 16/9;
         }
 
-        .search-input {
+        /* Search & Filter Section */
+        .search-box {
             width: 100%;
-            padding: 10px 15px;
-            background-color: #252d3d;
-            border: 2px solid #333d4f;
+            padding: 14px 20px;
+            font-size: 16px;
+            background-color: var(--card-bg);
+            border: 2px solid #334155;
             border-radius: 8px;
-            color: #ffffff;
-            font-size: 0.95rem;
+            color: var(--text-color);
+            box-sizing: border-box;
+            margin-bottom: 25px;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-box:focus {
             outline: none;
-            transition: all 0.3s ease;
+            border-color: var(--accent-color);
         }
 
-        .search-input:focus {
-            border-color: #00ff88;
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
-        }
-
-        .search-input::placeholder {
-            color: #8892b0;
-        }
-
+        /* Playlist Grid */
         .channel-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 15px;
-            max-height: 550px;
-            overflow-y: auto;
-            padding-right: 5px;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
         }
 
-        /* স্ক্রোলবার কাস্টমাইজেশন */
-        .channel-grid::-webkit-scrollbar {
-            width: 6px;
-        }
-        .channel-grid::-webkit-scrollbar-thumb {
-            background-color: #333d4f;
-            border-radius: 4px;
-        }
-
-        /* চ্যানেলカード স্টাইল */
         .channel-card {
-            background-color: #252d3d;
-            border: 2px solid transparent;
+            background-color: var(--card-bg);
             border-radius: 10px;
             padding: 15px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
             position: relative;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid #334155;
         }
 
         .channel-card:hover {
             transform: translateY(-5px);
-            border-color: #00ff88;
-            background-color: #2c374b;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            border-color: var(--accent-color);
         }
 
         .channel-number {
             position: absolute;
-            top: 8px;
-            left: 8px;
-            background-color: #00ff88;
-            color: #11141a;
+            top: 10px;
+            left: 10px;
+            background-color: var(--accent-color);
+            color: white;
+            font-size: 12px;
             font-weight: bold;
-            font-size: 0.75rem;
-            padding: 2px 6px;
-            border-radius: 4px;
+            padding: 2px 8px;
+            border-radius: 20px;
         }
 
         .channel-logo {
             width: 80px;
             height: 80px;
             object-fit: contain;
-            margin: 10px auto;
-            display: block;
-            background-color: #fff;
+            margin: 15px auto 10px;
+            background: #0f172a;
             border-radius: 8px;
             padding: 5px;
         }
 
         .channel-name {
-            font-size: 0.9rem;
+            font-size: 16px;
             font-weight: 600;
-            margin-top: 5px;
+            margin: 5px 0;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        /* নো রেজাল্ট মেসেজ */
+        .channel-group {
+            font-size: 12px;
+            color: var(--text-muted);
+            background: #0f172a;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
         .no-results {
             grid-column: 1 / -1;
             text-align: center;
-            padding: 30px;
-            color: #8892b0;
-            font-size: 1rem;
-        }
-
-        /* রেসপনসিভ লেআউট (ডেস্কটপ স্ক্রিনের জন্য সাইড-বাই-সাইড) */
-        @media (min-width: 992px) {
-            .container {
-                grid-template-columns: 60% 40%;
-                align-items: start;
-            }
-            .channel-grid {
-                max-height: 70vh;
-            }
+            color: var(--text-muted);
+            padding: 4px 0;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>লাইভ IPTV প্লেয়ার</h1>
-    </header>
+<div class="container">
+    <h1>IPTV Web Player</h1>
 
-    <div class="container">
-        
-        <div class="player-section">
-            <div class="video-container">
-                <video id="my-video" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto">
-                    <p class="vjs-no-js">
-                        ভিডিও দেখতে আপনার ব্রাউজারে জাভাস্ক্রিপ্ট সচল করুন।
-                    </p>
-                </video>
-            </div>
-            <div class="current-channel-info" id="playing-now">
-                চ্যানেল লোড হচ্ছে...
-            </div>
-        </div>
-
-        <div class="channel-section">
-            <div class="channel-header">
-                <h2>চ্যানেল সমূহ</h2>
-                <div class="search-container">
-                    <input type="text" id="search-box" class="search-input" placeholder="নম্বর বা নাম লিখে খুঁজুন...">
-                </div>
-            </div>
-            <div class="channel-grid" id="channel-list"></div>
-        </div>
-
+    <!-- Video Player -->
+    <div class="player-wrapper">
+        <video id="iptv-player" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto">
+            <source src="https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8" type="application/x-mpegURL">
+            আপনার ব্রাউজারটি এই ভিডিও প্লেয়ার সাপোর্ট করে না।
+        </video>
     </div>
 
-    <script src="https://vjs.zencdn.net/7.20.3/video.js"></script>
-    
-    <script>
-        // সম্পূর্ণ চ্যানেল ডেটাবেজ
-        const channels = [
-            { number: "01", name: "BTV", logo: "", link: "https://i.ibb.co/WfjvRsn/Picsart-23-06-07-11-07-21-738.png", link: "https://mytvbangla.com/0.m3u8" },
-            { number: "02", name: "Jamuna TV", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUGV6AowX_8QpJuAchdiiAZzAFJYZGYhBzVQ&s", link: "https://owrcovcrpy.gpcdn.net/bpk-tv/1701/output/index.m3u8" },
-            { number: "03", name: "Channel 24", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRztkZpAI3G-n4HsjZv2hkqQdcy1nRaGHlErA&s", link: "https://owrcovcrpy.gpcdn.net/bpk-tv/1703/output/index.m3u8" },
-            { number: "04", name: "Maasranga", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIPhCXYx8nmlx5myoXQGQQnxmn6Vol1z_gx9zDIH3A-GeyGbfvoq_--SE&s=10", link: "http://mtv.sunplex.live/MAASRANGA-TV/index.m3u8" },
-            { number: "05", name: "MY TV HD", logo: "https://i.ibb.co/WfjvRsn/Picsart-23-06-07-11-07-21-738.png", link: "https://mytvbangla.com/0.m3u8" },
-            { number: "06", name: "DEEPTO TV", logo: "https://i.ibb.co/bbYQfNr/Picsart-23-06-07-10-24-56-525.png", link: "https://byphdgllyk.gpcdn.net/hls/deeptotv/index.m3u8" },
-            { number: "07", name: "MOVIE BANGLA", logo: "https://i.ibb.co/Tr1FsLp/Picsart-23-06-07-11-09-56-678.png", link: "http://alvetv.com/moviebanglatv/8080/index.m3u8" },
-            { number: "08", name: "Ekushey", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQk_4EUXm16T6Jwq2Xbs4aBojuYHjXIl-fwftK1G8YexEPQ4S5zasmLFMs&s=10", link: "http://live.ekushey-tv.com/hls-live/livepkgr/_definst_/liveevent/livestream3.m3u8" },
-            { number: "09", name: "Aamar Bangla (720p)", logo: "https://www.jagobd.com/wp-content/uploads/2022/07/Aamar-Bangla.jpg", link: "https://live-stream.utkalbongo.com/utkalbongo/stream10/hls/amarbangla.m3u8" },
-            { number: "10", name: "Aakaash Aath (720p)", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHL2cLD63aIFVGSfiVcNjON-bsL1oB3VDNdA&s", link: "https://cdn-4.pishow.tv/live/969/master.m3u8" },
-            { number: "11", name: "TARA BANGLA CINEMA", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkMaPLaW25iw7db5DrftICZ0d3RLQnbCNO-3UqRYy83RHADDqYcXAiDRJH&s=10", link: "http://103.145.48.150:90/laosat24/taratv/index.m3u8" },
-            { number: "12", name: "YRF Music HD", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2JB6Ys79FRoMid_9C62MN6xwNysfonAtEKA&s", link: "https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg01412-xiaomiasia-yrfmusic-xiaomi/playlist.m3u8" },
-            { number: "13", name: "Sangeet Bangla (720p)", logo: "
+    <!-- Smart Search Bar -->
+    <input type="text" id="searchBar" class="search-box" placeholder="চ্যানেলের নাম, নম্বর অথবা গ্রুপ লিখে সার্চ করুন...">
+
+    <!-- Channel Grid -->
+    <div class="channel-grid" id="channelContainer">
+        <!-- JavaScript এর মাধ্যমে চ্যানেলগুলো এখানে লোড হবে -->
+    </div>
+</div>
+
+<!-- Video.js Scripts -->
+<script src="https://vjs.zencdn.net/7.20.3/video.js"></script>
+
+<script>
+    // ডেমো চ্যানেল ডেটা (এখানে আপনার নিজের m3u8 লিংক বসাতে পারবেন)
+    const channels = [
+        {
+            number: "1",
+            name: "Somoy TV",
+            logo: "https://via.placeholder.com/80x80/0f172a/fff?text=Somoy",
+            group: "News",
+            url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+        },
+        {
+            number: "2",
+            name: "Jamuna TV",
+            logo: "https://via.placeholder.com/80x80/0f172a/fff?text=Jamuna",
+            group: "News",
+            url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+        },
+        {
+            number: "3",
+            name: "Sony Sports 1",
+            logo: "https://via.placeholder.com/80x80/0f172a/fff?text=Sony",
+            group: "Sports",
+            url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+        },
+        {
+            number: "4",
+            name: "HBO HD",
+            logo: "https://via.placeholder.com/80x80/0f172a/fff?text=HBO",
+            group: "Movies",
+            url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+        },
+        {
+            number: "5",
+            name: "Discovery Channel",
+            logo: "https://via.placeholder.com/80x80/0f172a/fff?text=Discovery",
+            group: "Infotainment",
+            url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
+        }
+    ];
+
+    // Initialize Video.js Player
+    const player = videojs('iptv-player');
+
+    const channelContainer = document.getElementById('channelContainer');
+    const searchBar = document.getElementById('searchBar');
+
+    // চ্যানেল কার্ড তৈরি ও রেন্ডার করার ফাংশন
+    function displayChannels(channelList) {
+        channelContainer.innerHTML = "";
+        
+        if (channelList.length === 0) {
+            channelContainer.innerHTML = `<div class="no-results">কোনো চ্যানেল খুঁজে পাওয়া যায়নি!</div>`;
+            return;
+        }
+
+        channelList.forEach(channel => {
+            const card = document.createElement('div');
+            card.className = 'channel-card';
+            card.onclick = () => playChannel(channel.url);
+
+            card.innerHTML = `
+                <div class="channel-number">#${channel.number}</div>
+                <img class="channel-logo" src="${channel.logo}" alt="${channel.name}" onerror="this.src='https://via.placeholder.com/80x80/0f172a/fff?text=No+Logo'">
+                <div class="channel-name">${channel.name}</div>
+                <div class="channel-group">${channel.group}</div>
+            `;
+            channelContainer.appendChild(card);
+        });
+    }
+
+    // চ্যানেল প্লে করার ফাংশন
+    function playChannel(url) {
+        player.src({
+            src: url,
+            type: 'application/x-mpegURL'
+        });
+        player.play();
+        window.scrollTo({ top: 0, behavior: 'smooth' }); // প্লেয়ারের কাছে স্ক্রোল করবে
+    }
+
+    // অল-ইন-ওয়ান সার্চ ফাংশন (নাম, নম্বর এবং গ্রুপ)
+    searchBar.addEventListener('input', (e) => {
+        const searchTxt = e.target.value.toLowerCase().trim();
+        
+        const filtered = channels.filter(channel => {
+            return channel.name.toLowerCase().includes(searchTxt) || 
+                   channel.number.toString() === searchTxt || 
+                   channel.group.toLowerCase().includes(searchTxt);
+        });
+        
+        displayChannels(filtered);
+    });
+
+    // অ্যাপ চালুর সময় প্রথমবার সব চ্যানেল লোড করা
+    displayChannels(channels);
+</script>
+
+</body>
+</html>
