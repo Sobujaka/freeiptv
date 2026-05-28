@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jahangir IPTV - Ultimate Big Side Player</title>
+    <title>Jahangir IPTV Premium - Ready Live TV</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -27,28 +27,24 @@
     <header class="bg-[#0f1524] border-b border-slate-800/80 px-6 py-3 flex items-center justify-between shrink-0 shadow-lg z-20">
         <div class="flex items-center gap-3">
             <i class="fa-solid fa-play text-indigo-500 text-xl animate-pulse"></i>
-            <h1 class="text-lg font-bold tracking-wide text-white">Jahangir <span class="text-indigo-400">IPTV Cinema</span></h1>
+            <h1 class="text-lg font-bold tracking-wide text-white">Jahangir <span class="text-indigo-400">IPTV PRO HD</span></h1>
         </div>
 
-        <div class="flex items-center gap-3">
-            <label class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-xl cursor-pointer transition-all flex items-center gap-2 shadow-md">
-                <i class="fa-solid fa-file-import"></i> Upload M3U List
-                <input type="file" id="m3uUploader" accept=".m3u,.m3u8" class="hidden">
-            </label>
-            
-            <button onclick="deleteCurrentDeadChannel()" class="bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white border border-rose-500/30 text-xs font-bold px-4 py-2 rounded-xl transition-all flex items-center gap-2">
-                <i class="fa-solid fa-trash-can"></i> Remove Dead Link
-            </button>
+        <div class="w-full max-w-md mx-4">
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="searchBox" placeholder="Type name or channel number..." class="w-full bg-[#070a13] border border-slate-700/80 rounded-full pl-9 pr-4 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 transition-colors">
+            </div>
+        </div>
 
-            <button onclick="downloadCleanM3U()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all flex items-center gap-2 shadow-md">
-                <i class="fa-solid fa-cloud-arrow-down"></i> Download Clean M3U
-            </button>
+        <div class="hidden md:block text-[11px] bg-indigo-950/60 border border-indigo-900/50 text-indigo-300 px-3 py-1.5 rounded-xl">
+            <i class="fa-solid fa-keyboard mr-1"></i> Press <b class="text-white font-mono">1, 2, 12, 13, 14</b> on Keyboard to Switch
         </div>
     </header>
 
     <div class="flex flex-1 overflow-hidden relative">
         
-        <aside class="w-40 lg:w-48 bg-[#0f1524] border-r border-slate-800/60 flex flex-col shrink-0 z-10">
+        <aside class="w-44 lg:w-52 bg-[#0f1524] border-r border-slate-800/60 flex flex-col shrink-0 z-10">
             <div class="p-3 border-b border-slate-800/40">
                 <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Categories</h2>
             </div>
@@ -56,7 +52,7 @@
                 </div>
         </aside>
 
-        <div class="w-[28%] min-w-[260px] bg-[#070a13] border-r border-slate-800/60 flex flex-col overflow-hidden p-3 z-10">
+        <div class="w-[28%] min-w-[270px] bg-[#070a13] border-r border-slate-800/60 flex flex-col overflow-hidden p-3 z-10">
             <div class="flex items-center justify-between mb-3 px-1">
                 <h2 id="currentCategoryTitle" class="text-xs font-bold text-slate-300 uppercase tracking-wider truncate">
                     <i class="fa-solid fa-layer-group text-indigo-400 mr-1"></i> All Channels
@@ -64,12 +60,8 @@
                 <span id="channelCount" class="text-[10px] bg-indigo-950 text-indigo-300 px-2 py-0.5 rounded-md border border-indigo-900/40 font-mono font-bold">0</span>
             </div>
 
-            <div id="channelsGrid" class="flex-1 overflow-y-auto custom-scrollbar grid grid-cols-2 gap-2 content-start pb-4">
-                <div class="col-span-full py-12 text-center text-slate-600 text-xs">
-                    <i class="fa-solid fa-file-invoice text-2xl mb-2 text-slate-800 block animate-bounce"></i>
-                    Upload M3U list to start.
+            <div id="channelsGrid" class="flex-1 overflow-y-auto custom-scrollbar grid grid-cols-2 gap-2.5 content-start pb-4">
                 </div>
-            </div>
         </div>
 
         <main class="flex-1 bg-black flex flex-col relative justify-center items-center overflow-hidden z-10">
@@ -87,9 +79,9 @@
 
             <div class="w-full h-full relative bg-black flex items-center justify-center">
                 <div id="playerPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 p-6 text-center bg-gradient-to-b from-[#0f1524] via-[#070a13] to-black z-10">
-                    <i class="fa-solid fa-circle-play text-3xl text-indigo-500/30 mb-2 animate-pulse"></i>
-                    <p class="text-xs font-bold text-slate-300">Big Cinema Display Player Ready</p>
-                    <p class="text-[10px] text-slate-600 mt-1 max-w-xs">Select any channel from the left panel, or type numbers like <span class="text-indigo-400 font-bold font-mono">12, 13, 14</span> sequentially on your keyboard.</p>
+                    <i class="fa-solid fa-circle-play text-4xl text-indigo-500/20 mb-2 animate-pulse"></i>
+                    <p class="text-xs font-bold text-slate-300">Jahangir IPTV Player Active</p>
+                    <p class="text-[10px] text-slate-600 mt-1 max-w-xs">Select any channel from the list, or directly type channel numbers like <span class="text-indigo-400 font-bold font-mono">1, 2, 12, 13, 14</span> on your keyboard.</p>
                 </div>
                 
                 <video id="iptv-cinema-player" class="video-js vjs-default-skin w-full h-full object-contain" controls preload="auto"></video>
@@ -99,12 +91,55 @@
     </div>
 
     <script>
-        let channels = [];
+        // --- PRE-LOADED CHANNELS DATABASE (এখানে আপনার সব চ্যানেল এড করা থাকবে) ---
+        const channels = [
+            { 
+                id: 1, 
+                number: "1", 
+                name: "Cartoon Network", 
+                group: "Kids", 
+                logo: "https://i.ibb.co.com/8B0Lpzd/1000021166.png", 
+                url: "https://vodzong.mjunoon.tv:8087/streamtest/cartoon-network-87/playlist.m3u8" 
+            },
+            { 
+                id: 2, 
+                number: "2", 
+                name: "Somoy TV HD", 
+                group: "News", 
+                logo: "https://www.somoynews.tv/themes/somoy/images/logo.png", 
+                url: "https://vodzong.mjunoon.tv:8087/streamtest/cartoon-network-87/playlist.m3u8" // টেস্ট করার জন্য লিংক দেওয়া, আপনার লিংক এখানে বসাবেন
+            },
+            { 
+                id: 12, 
+                number: "12", 
+                name: "Sony Sports 1", 
+                group: "Sports", 
+                logo: "https://upload.wikimedia.org/wikipedia/commons/2/23/Sony_Sports_Network_logo.png", 
+                url: "https://vodzong.mjunoon.tv:8087/streamtest/cartoon-network-87/playlist.m3u8"
+            },
+            { 
+                id: 13, 
+                number: "13", 
+                name: "Pogo TV", 
+                group: "Kids", 
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Pogo_tv_logo.svg/1200px-Pogo_tv_logo.svg.png", 
+                url: "https://vodzong.mjunoon.tv:8087/streamtest/cartoon-network-87/playlist.m3u8"
+            },
+            { 
+                id: 14, 
+                number: "14", 
+                name: "Independent TV", 
+                group: "News", 
+                logo: "https://www.itvbd.com/templates/default/images/logo.png", 
+                url: "https://vodzong.mjunoon.tv:8087/streamtest/cartoon-network-87/playlist.m3u8"
+            }
+        ];
+
         let selectedCategory = "All";
-        let activeChannelId = null;
+        let searchFilterQuery = "";
         let player;
 
-        // Remote sequential keyboard input configuration (12, 13, 14 fix)
+        // Remote sequential keyboard input configuration
         let keypressBuffer = "";
         let keypressTimer = null;
 
@@ -114,11 +149,19 @@
                 html5: { vhs: { overrideNative: true } }
             });
 
-            document.getElementById('m3uUploader').addEventListener('change', handleM3UUpload);
+            // Initial Render
+            renderGroups();
+            renderChannelsGrid();
+
+            // Search Bar Input Listener
+            document.getElementById('searchBox').addEventListener('input', (e) => {
+                searchFilterQuery = e.target.value.toLowerCase();
+                renderChannelsGrid();
+            });
 
             // ⌨️ MULTI-DIGIT ADVANCED KEYBOARD CONTROLLER (1, 2, 12, 13, 14 etc.)
             document.addEventListener('keydown', (e) => {
-                if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT') return;
+                if (document.activeElement.tagName === 'INPUT') return;
 
                 // Capture digits 0 to 9
                 if (e.key >= '0' && e.key <= '9') {
@@ -148,45 +191,95 @@
             if (targetedChannel) {
                 playChannel(targetedChannel.id);
             } else {
-                alert(`Channel number ${cleanIntString} does not exist in your playlist!`);
+                alert(`Channel number ${cleanIntString} does not exist in the list!`);
             }
         }
 
-        // --- Core M3U Playlist Parser Engine ---
-        function handleM3UUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+        // Render Sidebar Groups
+        function renderGroups() {
+            const groupList = document.getElementById('groupList');
+            const uniqueGroups = ['All', ...new Set(channels.map(ch => ch.group))];
+            
+            groupList.innerHTML = uniqueGroups.map(grp => {
+                const isActive = selectedCategory === grp;
+                const count = grp === 'All' ? channels.length : channels.filter(c => c.group === grp).length;
+                
+                return `
+                    <button onclick="filterCategory('${grp}')" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 text-left ${isActive ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/10' : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200'}">
+                        <span class="truncate pr-1">${grp}</span>
+                        <span class="text-[10px] px-1.5 py-0.2 rounded bg-slate-950/40 text-slate-400">${count}</span>
+                    </button>
+                `;
+            }).join('');
+        }
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const lines = e.target.result.split('\n');
-                channels = [];
-                let currentItem = null;
-                let counter = 1;
+        function filterCategory(category) {
+            selectedCategory = category;
+            document.getElementById('currentCategoryTitle').innerHTML = `<i class="fa-solid fa-layer-group text-indigo-400 mr-1"></i> ${category}`;
+            renderGroups();
+            renderChannelsGrid();
+        }
 
-                for (let i = 0; i < lines.length; i++) {
-                    let line = lines[i].trim();
+        // Render Sidebar Box Items List (Your exact grid style)
+        function renderChannelsGrid() {
+            const grid = document.getElementById('channelsGrid');
+            
+            const filtered = channels.filter(ch => {
+                const matchesCategory = selectedCategory === 'All' || ch.group === selectedCategory;
+                const matchesSearch = ch.name.toLowerCase().includes(searchFilterQuery) || ch.number.includes(searchFilterQuery);
+                return matchesCategory && matchesSearch;
+            });
 
-                    if (line.startsWith('#EXTINF:')) {
-                        currentItem = {};
-                        currentItem.id = counter;
-                        currentItem.number = String(counter); // Auto sequence numerical layout ids
-                        
-                        const logoMatch = line.match(/tvg-logo="([^"]+)"/);
-                        const groupMatch = line.match(/group-title="([^"]+)"/);
-                        
-                        currentItem.logo = logoMatch ? logoMatch[1] : "";
-                        currentItem.group = groupMatch ? groupMatch[1] : "Live Streams";
-                        
-                        const commaIdx = line.lastIndexOf(',');
-                        currentItem.name = commaIdx !== -1 ? line.substring(commaIdx + 1).trim() : "Live TV Stream";
-                        
-                    } else if (line.startsWith('http') && currentItem) {
-                        currentItem.url = line;
-                        channels.push(currentItem);
-                        currentItem = null;
-                        counter++;
-                    }
-                }
+            document.getElementById('channelCount').innerText = filtered.length;
 
-                selectedCategory =
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-600 text-xs">No channels found</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(ch => {
+                const isCurrentPlay = activeChannelId === ch.id;
+                return `
+                    <div onclick="playChannel(${ch.id})" class="bg-[#0f1524] border ${isCurrentPlay ? 'border-indigo-500 bg-[#141c30]' : 'border-slate-800/80'} hover:border-indigo-500/70 rounded-2xl p-2.5 flex flex-col items-center justify-between text-center cursor-pointer hover:bg-[#131b2e] transition-all duration-150 group relative overflow-hidden aspect-square shadow">
+                        <span class="absolute top-1.5 left-1.5 text-[9px] font-mono font-bold bg-slate-950/80 text-indigo-400 px-1.5 py-0.5 rounded border border-slate-800/40">Ch ${ch.number}</span>
+                        <div class="w-12 h-12 flex items-center justify-center my-auto">
+                            <img src="${ch.logo}" alt="" onerror="this.src='https://placehold.co/80x80/070a13/cbd5e1?text=TV'" class="max-w-full max-h-full object-contain filter drop-shadow group-hover:scale-105 transition-transform">
+                        </div>
+                        <h3 class="w-full text-[10px] font-bold text-slate-300 group-hover:text-indigo-400 transition-colors truncate px-0.5">${ch.name}</h3>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Action Trigger: Active Stream URL Playback
+        function playChannel(id) {
+            const channel = channels.find(c => c.id === id);
+            if (!channel) return;
+
+            activeChannelId = id;
+            document.getElementById('playerPlaceholder').classList.add('hidden');
+            
+            // Stream URL setup inside Video.js core engine
+            player.src({
+                src: channel.url,
+                type: 'application/x-mpegURL'
+            });
+            player.play();
+            renderChannelsGrid();
+
+            // Flash notification banner box over the video layout top edge
+            const overlay = document.getElementById('channelOverlay');
+            document.getElementById('overlayNumber').innerText = channel.number;
+            document.getElementById('overlayName').innerText = channel.name;
+            
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+            overlay.classList.add('opacity-100');
+            
+            setTimeout(() => {
+                overlay.classList.remove('opacity-100');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
