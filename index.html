@@ -5,16 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jahangir IPTV PRO HD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
     <style>
         :root {
-            --bg-nav: #0b111e;
-            --bg-main: #080c14;
-            --bg-sidebar: #0d1527;
-            --bg-card: #131d31;
-            --accent-color: #5856d6;
+            --bg-nav: #0b1224;
+            --bg-main: #090e1a;
+            --bg-sidebar: #0f1626;
+            --bg-card: #172237;
+            --accent-purple: #6366f1;
             --text-main: #f8fafc;
-            --text-muted: #4e5d78;
-            --border-color: #1a263e;
+            --text-muted: #64748b;
+            --border-color: #1e293b;
         }
 
         body {
@@ -29,243 +30,245 @@
             flex-direction: column;
         }
 
-        /* 1. TOP NAVBAR */
+        /* TOP NAVBAR (Exactly like your design) */
         .navbar {
-            height: 65px;
+            height: 70px;
             background-color: var(--bg-nav);
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 20px;
+            padding: 0 24px;
             box-sizing: border-box;
             z-index: 10;
         }
 
-        .nav-logo {
+        .nav-logo-area {
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .nav-logo i {
-            font-size: 22px;
-            color: var(--accent-color);
+        .logo-icon {
+            font-size: 24px;
+            color: var(--accent-purple);
         }
 
         .logo-text {
-            font-size: 19px;
+            font-size: 20px;
             font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
-        .badge-hd {
-            background-color: var(--accent-color);
-            font-size: 10px;
+        .badge-pro {
+            background-color: var(--accent-purple);
+            font-size: 11px;
             font-weight: bold;
-            padding: 2px 6px;
+            padding: 2px 8px;
             border-radius: 4px;
-            margin-left: 5px;
+            text-transform: uppercase;
         }
 
-        .search-wrapper {
+        .search-container {
             position: relative;
-            width: 450px;
+            width: 400px;
         }
 
-        .search-wrapper i {
+        .search-container i {
             position: absolute;
             left: 15px;
             top: 50%;
             transform: translateY(-50%);
-            color: #4e5d78;
+            color: var(--text-muted);
         }
 
         .search-box {
             width: 100%;
-            padding: 9px 15px 9px 42px;
-            background-color: #060a12;
+            padding: 10px 15px 10px 45px;
+            background-color: #090e1a;
             border: 1px solid var(--border-color);
-            border-radius: 20px;
-            color: white;
+            border-radius: 30px;
+            color: var(--text-main);
             font-size: 14px;
             box-sizing: border-box;
         }
 
         .search-box:focus {
             outline: none;
-            border-color: var(--accent-color);
+            border-color: var(--accent-purple);
         }
 
-        .hint-keyboard {
-            font-size: 12px;
-            color: #4e5d78;
-            background: #0d1527;
+        .shortcut-hint {
+            background-color: #111b2e;
+            border: 1px solid var(--border-color);
             padding: 6px 12px;
             border-radius: 6px;
-            border: 1px solid var(--border-color);
+            font-size: 12px;
+            color: var(--text-muted);
         }
-        .hint-keyboard span {
-            color: #f59e0b;
+        .shortcut-hint span {
+            color: #fbbf24;
             font-weight: bold;
         }
 
-        /* MAIN THREE COLUMN LAYOUT */
-        .app-body {
+        /* 3-COLUMN APP LAYOUT */
+        .main-layout {
             display: flex;
             flex: 1;
-            height: calc(100vh - 65px);
+            height: calc(100vh - 70px);
             overflow: hidden;
         }
 
-        /* COLUMN 1: CATEGORIES */
-        .col-categories {
-            width: 220px;
+        /* COLUMN 1: SIDEBAR (CATEGORIES) */
+        .sidebar-left {
+            width: 240px;
             background-color: var(--bg-sidebar);
             border-right: 1px solid var(--border-color);
             padding: 20px 10px;
             box-sizing: border-box;
         }
 
-        .sidebar-title {
+        .section-title {
             font-size: 11px;
             font-weight: 700;
-            color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            color: var(--text-muted);
             margin-bottom: 15px;
             padding-left: 10px;
+            letter-spacing: 1px;
         }
 
-        .cat-btn {
+        .category-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 14px;
+            padding: 12px 15px;
             border-radius: 8px;
             cursor: pointer;
-            margin-bottom: 5px;
-            color: #8a99ad;
-            font-size: 14px;
-            font-weight: 500;
+            margin-bottom: 6px;
             transition: all 0.2s;
+            color: #94a3b8;
+            font-weight: 500;
         }
 
-        .cat-btn i {
-            margin-right: 10px;
+        .category-item i {
+            margin-right: 12px;
             width: 16px;
         }
 
-        .cat-btn:hover, .cat-btn.active {
-            background-color: var(--accent-color);
+        .category-item:hover, .category-item.active {
+            background-color: var(--accent-purple);
             color: white;
         }
 
-        .cat-count {
+        .category-count {
             font-size: 11px;
-            background-color: rgba(0,0,0,0.2);
+            background-color: rgba(0, 0, 0, 0.2);
             padding: 2px 6px;
             border-radius: 4px;
             color: inherit;
         }
 
-        /* COLUMN 2: CHANNELS LIST GRID */
-        .col-channels {
-            width: 380px;
+        /* COLUMN 2: MIDDLE PANEL (CHANNELS LIST) */
+        .middle-column {
+            width: 420px;
             background-color: var(--bg-main);
             border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
+            box-sizing: border-box;
         }
 
-        .channels-header {
-            padding: 15px 20px;
+        .middle-header {
+            padding: 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid var(--border-color);
         }
 
-        .channels-header h3 {
+        .middle-header h3 {
             margin: 0;
-            font-size: 15px;
+            font-size: 16px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
-        .grid-scroll {
+        .channel-grid-container {
             flex: 1;
             overflow-y: auto;
             padding: 15px;
         }
 
-        .grid-scroll::-webkit-scrollbar {
-            width: 5px;
+        .channel-grid-container::-webkit-scrollbar {
+            width: 6px;
         }
-        .grid-scroll::-webkit-scrollbar-thumb {
-            background: #1a263e;
-            border-radius: 10px;
+        .channel-grid-container::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
         }
 
-        .channel-subgrid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
+        .channel-grid {
+            display: flex;
+            flex-direction: column;
             gap: 10px;
         }
 
-        /* Exact card styling from Capturegdfg.PNG */
-        .ch-card {
+        /* Exactly matches your requested card design */
+        .channel-card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 10px;
+            border-radius: 10px;
+            padding: 12px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             cursor: pointer;
             position: relative;
             transition: all 0.2s;
         }
 
-        .ch-card:hover, .ch-card.active {
-            border-color: var(--accent-color);
-            background-color: #17243e;
+        .channel-card:hover, .channel-card.active {
+            border-color: var(--accent-purple);
+            background-color: #1e2d4a;
+            box-shadow: 0 0 12px rgba(99, 102, 241, 0.2);
         }
 
-        .ch-thumb {
-            width: 40px;
-            height: 40px;
-            background: #060a12;
+        .logo-box {
+            width: 45px;
+            height: 45px;
+            background-color: #0b1324;
             border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
             flex-shrink: 0;
-            border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .ch-thumb img {
+        .logo-box img {
             width: 100%;
             height: 100%;
             object-fit: contain;
+            padding: 2px;
         }
 
-        .ch-meta {
+        .ch-details {
             overflow: hidden;
-            flex: 1;
+            flex-grow: 1;
         }
 
-        .meta-label {
-            font-size: 9px;
-            color: var(--accent-color);
+        .ch-num {
+            font-size: 10px;
+            color: var(--accent-purple);
             font-weight: bold;
             text-transform: uppercase;
             margin-bottom: 2px;
         }
 
-        .meta-name {
-            font-size: 12px;
+        .ch-title {
+            font-size: 13px;
             font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
@@ -273,201 +276,134 @@
             margin: 0;
         }
 
-        .play-indicator {
-            font-size: 10px;
-            color: var(--accent-color);
-            position: absolute;
-            right: 10px;
+        .play-icon-hint {
+            font-size: 12px;
+            color: var(--text-muted);
             opacity: 0;
+            transition: opacity 0.2s;
         }
-        .ch-card:hover .play-indicator, .ch-card.active .play-indicator {
+        .channel-card:hover .play-icon-hint, .channel-card.active .play-icon-hint {
             opacity: 1;
+            color: var(--accent-purple);
         }
 
-        /* COLUMN 3: BIG VIDEO PLAYER */
-        .col-player {
+        /* COLUMN 3: BIG VIDEO PLAYER (Takes up maximum screen space) */
+        .player-column {
             flex: 1;
             background-color: #000;
             display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        .player-inner {
-            flex: 1;
-            width: 100%;
-            height: 100%;
-            display: flex;
             align-items: center;
             justify-content: center;
-            background: #000;
-        }
-
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        /* Premium Fix Control bar for CORS proxy */
-        .proxy-control-bar {
-            background-color: var(--bg-nav);
-            border-top: 1px solid var(--border-color);
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 12px;
-        }
-
-        .proxy-toggle {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-
-        .toggle-switch {
             position: relative;
-            width: 36px;
-            height: 20px;
-            background-color: #1a263e;
-            border-radius: 20px;
-            transition: 0.3s;
         }
 
-        .toggle-switch::before {
-            content: '';
-            position: absolute;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background-color: white;
-            top: 3px;
-            left: 3px;
-            transition: 0.3s;
+        .video-js {
+            width: 100% !important;
+            height: 100% !important;
         }
 
-        input[type="checkbox"]:checked + .toggle-switch {
-            background-color: var(--accent-color);
-        }
-
-        input[type="checkbox"]:checked + .toggle-switch::before {
-            left: 19px;
-        }
-
-        .no-data {
-            grid-column: 1 / -1;
+        .no-results {
             text-align: center;
             color: var(--text-muted);
-            padding: 20px;
-            font-size: 13px;
+            padding: 30px 0;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
 
     <div class="navbar">
-        <div class="nav-logo">
-            <i class="fa-solid fa-square-rss"></i>
-            <span class="logo-text">Jahangir <span style="color:#fff">IPTV</span></span>
-            <span class="badge-hd">PRO HD</span>
+        <div class="nav-logo-area">
+            <i class="fa-solid fa-tv logo-icon"></i>
+            <span class="logo-text">Jahangir <span style="color: #fff;">IPTV</span></span>
+            <span class="badge-pro">Pro HD</span>
         </div>
         
-        <div class="search-wrapper">
+        <div class="search-container">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="mainSearch" class="search-box" placeholder="Type name or channel number...">
+            <input type="text" id="searchBar" class="search-box" placeholder="Type name or channel number...">
         </div>
 
-        <div class="hint-keyboard">
+        <div class="shortcut-hint">
             <i class="fa-solid fa-keyboard"></i> Press <span>1-9</span> on Keyboard to Change Channel
         </div>
     </div>
 
-    <div class="app-body">
+    <div class="main-layout">
         
-        <div class="col-categories">
-            <div class="sidebar-title">Categories</div>
-            <div id="categoryBox"></div>
+        <div class="sidebar-left">
+            <div class="section-title">Categories</div>
+            <div id="categoryContainer"></div>
         </div>
 
-        <div class="col-channels">
-            <div class="channels-header">
-                <h3 id="panelTitle"><i class="fa-solid fa-layer-group"></i> All Channels</h3>
-                <span class="cat-count" id="panelCount">0</span>
+        <div class="middle-column">
+            <div class="middle-header">
+                <h3 id="currentCategoryTitle"><i class="fa-solid fa-layer-group"></i> All Channels</h3>
+                <span class="category-count" id="currentCategoryCount">0</span>
             </div>
-            <div class="grid-scroll">
-                <div class="channel-subgrid" id="channelGrid"></div>
+            <div class="channel-grid-container">
+                <div class="channel-grid" id="channelContainer"></div>
             </div>
         </div>
 
-        <div class="col-player">
-            <div class="player-inner">
-                <video id="videoPlayer" controls autoplay></video>
-            </div>
-            <div class="proxy-control-bar">
-                <div><i class="fa-solid fa-circle-info" style="color:var(--accent-color)"></i> যদি কোনো চ্যানেল স্পিন করে বা লোড না হয়, ডানপাশের সুইচটি অন করুন।</div>
-                <label class="proxy-toggle">
-                    <span>CORS Proxy Fix</span>
-                    <input type="checkbox" id="proxyToggler" style="display:none">
-                    <div class="toggle-switch"></div>
-                </label>
-            </div>
+        <div class="player-column">
+            <video id="iptv-player" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto" autoplay>
+                <source src="https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/index.m3u8" type="application/x-mpegURL">
+            </video>
         </div>
 
     </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.12/hls.min.js"></script>
+<script src="https://vjs.zencdn.net/7.20.3/video-js.js"></script>
 
 <script>
-    // আপনার ফাইল থেকে প্রোভাইড করা সবকটি চ্যানেল সঠিক লোগো ও ক্যাটাগরি লিঙ্কিং সহ [cite: 1]
+    // Safe-escaped Database from M3U without breakdown characters
     const channels = [
-        { number: "1", name: "BTV", logo: "https://via.placeholder.com/80x80/0f172a/fff?text=BTV", group: "Entertainment", url: "https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/index.m3u8" },
+        { number: "1", name: "BTV", logo: "https://via.placeholder.com/80x80/0f172a/fff?text=BTV", group: "News", url: "https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/index.m3u8" },
         { number: "2", name: "Jamuna TV", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUGV6AowX_8QpJuAchdiiAZzAFJYZGYhBzVQ&s", group: "News", url: "https://owrcovcrpy.gpcdn.net/bpk-tv/1701/output/index.m3u8" },
         { number: "3", name: "Channel 24", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRztkZpAI3G-n4HsjZv2hkqQdcy1nRaGHlErA&s", group: "News", url: "https://owrcovcrpy.gpcdn.net/bpk-tv/1703/output/index.m3u8" },
         { number: "4", name: "Maasranga", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIPhCXYx8nmlx5myoXQGQQnxmn6Vol1z_gx9zDIH3A-GeyGbfvoq_--SE&s=10", group: "Entertainment", url: "http://mtv.sunplex.live/MAASRANGA-TV/index.m3u8" },
         { number: "5", name: "MY TV HD", logo: "https://i.ibb.co/WfjvRsn/Picsart-23-06-07-11-07-21-738.png", group: "Entertainment", url: "https://mytvbangla.com/0.m3u8" },
         { number: "6", name: "DEEPTO TV", logo: "https://i.ibb.co/bbYQfNr/Picsart-23-06-07-10-24-56-525.png", group: "Entertainment", url: "https://byphdgllyk.gpcdn.net/hls/deeptotv/index.m3u8" },
         { number: "7", name: "MOVIE BANGLA", logo: "https://i.ibb.co/Tr1FsLp/Picsart-23-06-07-11-09-56-678.png", group: "Movies", url: "http://alvetv.com/moviebanglatv/8080/index.m3u8" },
-        { number: "8", name: "Ekushey", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQk_4EUXm16T6Jwq2Xbs4aBojuYHjXIl-fwftK1G8YexEPQ4S5zasmLFMs&s=10", group: "Entertainment", url: "http://live.ekushey-tv.com/hls-live/livepkgr/_definst_/liveevent/livestream3.m3u8" },
-        { number: "9", name: "Aamar Bangla (720p)", logo: "https://www.jagobd.com/wp-content/uploads/2022/07/Aamar-Bangla.jpg", group: "Entertainment", url: "https://live-stream.utkalbongo.com/utkalbongo/stream10/hls/amarbangla.m3u8" },
-        { number: "10", name: "Aakaash Aath (720p)", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHL2cLD63aIFVGSfiVcNjON-bsL1oB3VDNdA&s", group: "Entertainment", url: "https://cdn-4.pishow.tv/live/969/master.m3u8" },
+        { number: "8", name: "Ekushey TV", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQk_4EUXm16T6Jwq2Xbs4aBojuYHjXIl-fwftK1G8YexEPQ4S5zasmLFMs&s=10", group: "Entertainment", url: "http://live.ekushey-tv.com/hls-live/livepkgr/_definst_/liveevent/livestream3.m3u8" },
+        { number: "9", name: "Aamar Bangla", logo: "https://www.jagobd.com/wp-content/uploads/2022/07/Aamar-Bangla.jpg", group: "Entertainment", url: "https://live-stream.utkalbongo.com/utkalbongo/stream10/hls/amarbangla.m3u8" },
+        { number: "10", name: "Aakaash Aath", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHL2cLD63aIFVGSfiVcNjON-bsL1oB3VDNdA&s", group: "Entertainment", url: "https://cdn-4.pishow.tv/live/969/master.m3u8" },
         { number: "11", name: "TARA BANGLA CINEMA", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkMaPLaW25iw7db5DrftICZ0d3RLQnbCNO-3UqRYy83RHADDqYcXAiDRJH&s=10", group: "Movies", url: "http://103.145.48.150:90/laosat24/taratv/index.m3u8" },
         { number: "12", name: "YRF Music HD", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2JB6Ys79FRoMid_9C62MN6xwNysfonAtEKA&s", group: "Music", url: "https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg01412-xiaomiasia-yrfmusic-xiaomi/playlist.m3u8" },
-        { number: "13", name: "Sangeet Bangla (720p)", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOXB3cxB0MES2vegMKOS1nPEgIalWkARAJsSLmLcBPTfgo4Ocd4tUaWQOO&s=10", group: "Music", url: "https://cdn-4.pishow.tv/live/1143/master.m3u8" },
+        { number: "13", name: "Sangeet Bangla", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOXB3cxB0MES2vegMKOS1nPEgIalWkARAJsSLmLcBPTfgo4Ocd4tUaWQOO&s=10", group: "Music", url: "https://cdn-4.pishow.tv/live/1143/master.m3u8" },
         { number: "14", name: "Cartoon Network", logo: "https://i.ibb.co.com/8B0Lpzd/1000021166.png", group: "Kids", url: "https://vodzong.mjunoon.tv:8087/streamtest/cartoon-network-87/playlist.m3u8" },
-        { number: "15", name: "Gubbare (1080p)", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5ihF02BBk_kJsXS7VfY5I7M4E0ebijozBdmU1q1OYlTHj5pA9VU_TaZk&s=10", group: "Kids", url: "https://epiconvh.akamaized.net/live/gubbare/master.m3u8" },
+        { number: "15", name: "Gubbare TV", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5ihF02BBk_kJsXS7VfY5I7M4E0ebijozBdmU1q1OYlTHj5pA9VU_TaZk&s=10", group: "Kids", url: "https://epiconvh.akamaized.net/live/gubbare/master.m3u8" },
         { number: "16", name: "Rongeen TV", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTpcqmYeSQWivpQzsZt7ihjB1LYtdbJi6qNzAxBdFrRYqNWv_CIbDI84_K&s=10xaA", group: "Kids", url: "https://server.thelegitpro.in/rongeentv/rongeentv/tracks-v1a1/mono.m3u8" },
         { number: "17", name: "Jungle Book", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGdKH7Le-kqTMpSS_l4bVwDi9Lcckokq2oZJxvtZTlYyLu0adlxCBFUrc&s=10", group: "Kids", url: "https://cc-4bhi5osabejc9.akamaized.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-4bhi5osabejc9/junglebook.m3u8" },
         { number: "18", name: "SHEEMAROO BOLLYWOOD", logo: "https://i.ibb.co/KjjqnRH/Picsart-23-06-30-21-35-20-283.png", group: "Movies", url: "https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg00864-shemarooenterta-shemabollywood-ono/playlist.m3u8" },
         { number: "19", name: "BOLLYWOOD HD", logo: "https://i.ibb.co/YNGyQJR/Picsart-23-06-25-22-19-02-657.png", group: "Movies", url: "https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/bollywood-hd/manifest.m3u8" },
         { number: "20", name: "CLASSIC BOLLYWOOD", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSeAgkUzr5OzWeRi0Zszfb7sNN-26QhQm0cujHpbNArZa-qRrfZGD54BL8&s=10", group: "Movies", url: "https://d35j504z0x2vu2.cloudfront.net:443/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/bollywood-classic/manifest.m3u8" },
-        { number: "21", name: "B4U Movies India (1080p)", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGcicwnkcj82wLqE5t74_BgOldWOVUm1PT2_jIdG1guc5RXakI17h0PUY&s=10", group: "Movies", url: "https://cdnb4u.wiseplayout.com/B4U_Movies/master.m3u8" },
+        { number: "21", name: "B4U Movies India", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGcicwnkcj82wLqE5t74_BgOldWOVUm1PT2_jIdG1guc5RXakI17h0PUY&s=10", group: "Movies", url: "https://cdnb4u.wiseplayout.com/B4U_Movies/master.m3u8" },
         { number: "22", name: "GOLDMINES", logo: "https://static.wikia.nocookie.net/logopedia/images/6/66/Goldmines_Logo.png", group: "Movies", url: "https://cdn-2.pishow.tv/live/1459/master.m3u8" },
-        { number: "23", name: "GOLDMINES MOVIES", logo: "https://yt3.googleusercontent.com/d66J-MMZ06-55gkF5maclPGB5f5j1L0SAs3iWnl3lhoswlWrJ67wD2a3mZGkgHgt-W3kMrIT=s900-c-k-c0x00ffffff-no-rj", group: "Movies", url: "https://cdn-2.pishow.tv/live/1461/master.m3u8" },
-        { number: "24", name: "&TV (1080p)", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLRAXh5Fkd5YeGHnH5cinl9oJkZYD6rSAcog&s", group: "Entertainment", url: "https://amg01117-amg01117c1-amgplt0165.playout.now3.amagi.tv/playlist.m3u8" },
+        { number: "23", name: "GOLDMINES MOVIES", logo: "https://via.placeholder.com/80x80/0f172a/fff?text=Goldmines", group: "Movies", url: "https://cdn-2.pishow.tv/live/1461/master.m3u8" },
+        { number: "24", name: "&TV HD", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLRAXh5Fkd5YeGHnH5cinl9oJkZYD6rSAcog&s", group: "Entertainment", url: "https://amg01117-amg01117c1-amgplt0165.playout.now3.amagi.tv/playlist.m3u8" },
         { number: "25", name: "SONY KAL HINDI", logo: "https://upload.wikimedia.org/wikipedia/hi/6/6e/Sony_Kal_Logo.jpeg", group: "Entertainment", url: "https://spt-sonykal-1-us.lg.wurl.tv/playlist.m3u8" },
-        { number: "26", name: "9xm", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQogiI0ZhtYbSjXstxsTfj9b18B71Qhn8WlsUxvhya48ARy8ZVJNNrR7sNCPxjRgJBQIo17LDP_gQca-iryfA3R6B2cB64WQLmE3-ASmSOtiA", group: "Music", url: "https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/9xm/master.m3u8" },
+        { number: "26", name: "9xm Music", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQogiI0ZhtYbSjXstxsTfj9b18B71Qhn8WlsUxvhya48ARy8ZVJNNrR7sNCPxjRgJBQIo17LDP_gQca-iryfA3R6B2cB64WQLmE3-ASmSOtiA", group: "Music", url: "https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/9xm/master.m3u8" },
         { number: "27", name: "Music India", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVv4W8vUZYWP-CbojHbEgJzST2qclgnq6V06LV6BVvALbQiRlJUDb1PLoL&s=10", group: "Music", url: "https://cdn-2.pishow.tv/live/226/master.m3u8" }
     ];
 
-    const video = document.getElementById('videoPlayer');
-    const categoryBox = document.getElementById('categoryBox');
-    const channelGrid = document.getElementById('channelGrid');
-    const mainSearch = document.getElementById('mainSearch');
-    const proxyToggler = document.getElementById('proxyToggler');
+    const player = videojs('iptv-player');
+    const channelContainer = document.getElementById('channelContainer');
+    const categoryContainer = document.getElementById('categoryContainer');
+    const searchBar = document.getElementById('searchBar');
+    
+    let currentCategory = 'All';
 
-    let hls = null;
-    let selectedCategory = 'All';
-    let activeStreamUrl = "";
-
-    // ১. ক্যাটাগরি প্যানেল রেন্ডারিং (Exactly Screen-Shot এর মত)
-    function setupCategories() {
+    // ১. ক্যাটাগরি মেনু ও টোটাল কাউন্ট জেনারেটর
+    function renderCategories() {
         const counts = { All: channels.length };
-        channels.forEach(c => counts[c.group] = (counts[c.group] || 0) + 1);
+        channels.forEach(ch => {
+            counts[ch.group] = (counts[ch.group] || 0) + 1;
+        });
 
-        const config = [
-            { id: 'All', name: 'All', icon: 'fa-list' },
+        const categories = [
+            { id: 'All', name: 'All', icon: 'fa-list-ul' },
             { id: 'Kids', name: 'Kids', icon: 'fa-child' },
             { id: 'News', name: 'News', icon: 'fa-newspaper' },
             { id: 'Movies', name: 'Movies', icon: 'fa-film' },
@@ -475,133 +411,103 @@
             { id: 'Entertainment', name: 'Entertainment', icon: 'fa-tv' }
         ];
 
-        categoryBox.innerHTML = "";
-        config.forEach(cat => {
+        categoryContainer.innerHTML = '';
+        categories.forEach(cat => {
             if(counts[cat.id] || cat.id === 'All') {
                 const div = document.createElement('div');
-                div.className = `cat-btn ${selectedCategory === cat.id ? 'active' : ''}`;
-                div.onclick = () => {
-                    selectedCategory = cat.id;
-                    document.getElementById('panelTitle').innerHTML = `<i class="fa-solid fa-layer-group"></i> ${cat.id} Channels`;
-                    setupCategories();
-                    applyFilter();
-                };
+                div.className = `category-item ${currentCategory === cat.id ? 'active' : ''}`;
+                div.onclick = () => selectCategory(cat.id);
                 div.innerHTML = `
                     <div><i class="fa-solid ${cat.icon}"></i> ${cat.name}</div>
-                    <span class="cat-count">${counts[cat.id] || 0}</span>
+                    <span class="category-count">${counts[cat.id] || 0}</span>
                 `;
-                categoryBox.appendChild(div);
+                categoryContainer.appendChild(div);
             }
         });
     }
 
-    // ২. চ্যানেল ফিল্টার
-    function applyFilter() {
-        const query = mainSearch.value.toLowerCase().trim();
+    // ২. ক্যাটাগরি সিলেক্টর একশন
+    function selectCategory(catId) {
+        currentCategory = catId;
+        document.getElementById('currentCategoryTitle').innerHTML = `<i class="fa-solid fa-layer-group"></i> ${catId} Channels`;
+        renderCategories();
+        filterChannels();
+    }
+
+    // ৩. চ্যানেল ফিল্টারিং ও রেন্ডারিং
+    function filterChannels() {
+        const searchTxt = searchBar.value.toLowerCase().trim();
         
         const filtered = channels.filter(ch => {
-            const matchCat = (selectedCategory === 'All' || ch.group === selectedCategory);
-            const matchSearch = (ch.name.toLowerCase().includes(query) || 
-                                 ch.number.toString() === query || 
-                                 ch.group.toLowerCase().includes(query));
-            return matchCat && matchSearch;
+            const matchesCategory = (currentCategory === 'All' || ch.group === currentCategory);
+            const matchesSearch = (ch.name.toLowerCase().includes(searchTxt) || 
+                                   ch.number.toString() === searchTxt);
+            return matchesCategory && matchesSearch;
         });
 
-        document.getElementById('panelCount').innerText = filtered.length;
+        document.getElementById('currentCategoryCount').innerText = filtered.length;
         renderGrid(filtered);
     }
 
-    // ৩. মিডল গ্রিডে চ্যানেল কার্ড রেন্ডার (২ কলাম বিশিষ্ট কার্ড)
+    // ৪. মিডল প্যানেলে চ্যানেলের কার্ড তৈরি
     function renderGrid(list) {
-        channelGrid.innerHTML = "";
+        channelContainer.innerHTML = '';
         if(list.length === 0) {
-            channelGrid.innerHTML = `<div class="no-data">No channels found</div>`;
+            channelContainer.innerHTML = `<div class="no-results">No channels found</div>`;
             return;
         }
 
         list.forEach(ch => {
             const card = document.createElement('div');
-            card.className = `ch-card ${activeStreamUrl === ch.url ? 'active' : ''}`;
-            card.id = `ch-${ch.number}`;
-            card.onclick = () => triggerPlay(ch.url, ch.number);
+            card.className = 'channel-card';
+            card.id = `card-${ch.number}`;
+            card.onclick = () => playChannel(ch.url, ch.number);
 
             card.innerHTML = `
-                <div class="ch-thumb">
-                    <img src="${ch.logo}" alt="" onerror="this.src='https://via.placeholder.com/40x40/0d1527/fff?text=TV'">
+                <div class="logo-box">
+                    <img src="${ch.logo}" alt="" onerror="this.src='https://via.placeholder.com/45x45/0b1324/fff?text=TV'">
                 </div>
-                <div class="ch-meta">
-                    <div class="meta-label">CH ${ch.number}</div>
-                    <div class="meta-name">${ch.name}</div>
+                <div class="ch-details">
+                    <div class="ch-num">CH ${ch.number}</div>
+                    <div class="ch-title">${ch.name}</div>
                 </div>
-                <i class="fa-solid fa-play play-indicator"></i>
+                <i class="fa-solid fa-chevron-right play-icon-hint"></i>
             `;
-            channelGrid.appendChild(card);
+            channelContainer.appendChild(card);
         });
     }
 
-    // ৪. অ্যাডভান্সড ভিডিও স্ট্রিম লোডার (Hls.js + Proxy Support)
-    function triggerPlay(url, chNum) {
-        activeStreamUrl = url;
-        
-        // সিলেকশন বর্ডার আপডেট
-        document.querySelectorAll('.ch-card').forEach(c => c.classList.remove('active'));
-        const selectedCard = document.getElementById(`ch-${chNum}`);
-        if(selectedCard) selectedCard.classList.add('active');
+    // ৫. ভিডিও প্লে করার কোর ইঞ্জিন
+    function playChannel(url, num) {
+        document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('active'));
+        const activeCard = document.getElementById(`card-${num}`);
+        if(activeCard) activeCard.classList.add('active');
 
-        // যদি CORS Proxy অন থাকে তবে লিংকের সামনে প্রক্সি যোগ হবে
-        let finalUrl = url;
-        if(proxyToggler.checked) {
-            finalUrl = "https://cors-anywhere.herokuapp.com/" + url; 
-        }
-
-        // এইচএলএস ইঞ্জিন লোড মেকানিজম (স্মুথ প্লেব্যাকের জন্য)
-        if (Hls.isSupported()) {
-            if (hls) hls.destroy();
-            hls = new Hls({ maxChunksQueueSize: 20, enableWorker: true });
-            hls.loadSource(finalUrl);
-            hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
-            hls.on(Hls.Events.ERROR, function (event, data) {
-                if (data.fatal) {
-                    console.log("Stream encounter error, trying core reload...");
-                }
-            });
-        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            video.src = finalUrl;
-            video.addEventListener('loadedmetadata', () => video.play());
-        }
+        player.src({ src: url, type: 'application/x-mpegURL' });
+        player.play().catch(err => console.log("Stream autoplay handle"));
     }
 
-    // প্রক্সি সুইচে ক্লিক করলে বর্তমান চ্যানেলটি আবার রিলোড হবে নতুন রুটে
-    proxyToggler.addEventListener('change', () => {
-        if(activeStreamUrl) {
-            const currentActive = channels.find(c => c.url === activeStreamUrl);
-            if(currentActive) triggerPlay(activeStreamUrl, currentActive.number);
-        }
-    });
+    // ইভেন্ট লিসেনারসমূহ
+    searchBar.addEventListener('input', filterChannels);
 
-    // সার্চবারের ইভেন্ট লিসেনার
-    mainSearch.addEventListener('input', applyFilter);
-
-    // কিবোর্ড শর্টকাট (১-৯ নম্বর চ্যানেল প্লে হবে)
+    // ১ থেকে ৯ বাটন কিবোর্ড শর্টকাট
     window.addEventListener('keydown', (e) => {
-        if (document.activeElement === mainSearch) return;
+        if (document.activeElement === searchBar) return;
         if (e.key >= '1' && e.key <= '9') {
-            const target = channels.find(ch => ch.number === e.key);
-            if (target) triggerPlay(target.url, target.number);
+            const targetChannel = channels.find(ch => ch.number === e.key);
+            if (targetChannel) playChannel(targetChannel.url, targetChannel.number);
         }
     });
 
-    // ইনিশিয়াল বুটআপ লোড
-    setupCategories();
-    applyFilter();
-
-    // ডিফল্ট প্রথম চ্যানেল অটো-প্লেয়ারে সেট করার নির্দেশিকা
-    if(channels.length > 0) {
-        setTimeout(() => {
-            triggerPlay(channels[0].url, channels[0].number);
-        }, 500);
-    }
+    // প্রাথমিক বুট-আপ রান
+    renderCategories();
+    filterChannels();
+    
+    // ডিফল্ট প্রথম চ্যানেল সিলেক্ট করা
+    setTimeout(() => {
+        const firstCard = document.getElementById('card-1');
+        if(firstCard) firstCard.classList.add('active');
+    }, 500);
 </script>
 
 </body>
