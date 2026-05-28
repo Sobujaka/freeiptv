@@ -39,7 +39,7 @@
     <div class="flex flex-1 overflow-hidden">
         
         <!-- Sidebar: Groups/Categories -->
-        <aside class="w-60 bg-slate-900 border-r border-slate-800 flex flex-col shrink-0">
+        <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col shrink-0">
             <div class="p-4 border-b border-slate-800">
                 <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Categories</h2>
             </div>
@@ -48,11 +48,11 @@
             </div>
         </aside>
 
-        <!-- Center & Right Workspace -->
-        <main class="flex-1 flex flex-col lg:flex-row overflow-hidden bg-slate-950">
+        <!-- Center: Video Player & Channel Grid -->
+        <main class="flex-1 flex flex-col md:flex-row overflow-hidden bg-slate-950">
             
-            <!-- Left Side: Channels Grid Container -->
-            <div class="flex-1 flex flex-col overflow-hidden p-4">
+            <!-- Channel Content (Left/Top side inside main) -->
+            <div class="flex-1 flex flex-col overflow-hidden border-r border-slate-800 p-4">
                 <div class="flex items-center justify-between mb-4">
                     <h2 id="currentCategoryTitle" class="text-lg font-bold text-white flex items-center gap-2">
                         <i class="fa-solid fa-layer-group text-indigo-400"></i> All Channels
@@ -60,78 +60,75 @@
                     <span id="channelCount" class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full border border-slate-700">0 Channels</span>
                 </div>
                 
-                <!-- Channels Grid -->
-                <div id="channelsGrid" class="flex-1 overflow-y-auto custom-scrollbar grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3 content-start pb-6">
+                <!-- Channels Grid Container -->
+                <div id="channelsGrid" class="flex-1 overflow-y-auto custom-scrollbar grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 content-start pb-6">
                     <!-- Channels will be injected here via JavaScript -->
                 </div>
             </div>
 
-            <!-- Right Side: Big Video Player Box (No text/labels included) -->
-            <section class="w-full lg:w-[55%] xl:w-[60%] bg-black border-t lg:border-t-0 lg:border-l border-slate-800 flex flex-col shrink-0 relative">
+            <!-- Right Side: Sticky Video Player Box -->
+            <section class="w-full md:w-96 bg-slate-900 border-t md:border-t-0 border-slate-800 flex flex-col shrink-0">
+                <div class="p-4 border-b border-slate-800 flex justify-between items-center">
+                    <h3 class="text-sm font-semibold text-slate-300 uppercase tracking-wider">Now Playing</h3>
+                    <div id="playerStatus" class="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-950/50 px-2 py-0.5 rounded-full border border-emerald-800">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Live
+                    </div>
+                </div>
                 
                 <!-- Video.js Player Container -->
-                <div class="w-full h-full relative flex items-center justify-center aspect-video lg:aspect-auto">
-                    <!-- Placeholder screen before click -->
-                    <div id="playerPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 p-4 text-center bg-slate-900 z-10 transition-all duration-300">
-                        <i class="fa-solid fa-play-circle text-6xl mb-3 text-indigo-500/40"></i>
-                        <p class="text-sm tracking-wider">Select a channel to start streaming</p>
+                <div class="bg-black aspect-video md:aspect-auto md:flex-1 relative flex items-center justify-center">
+                    <div id="playerPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 p-4 text-center bg-slate-900 z-10">
+                        <i class="fa-solid fa-play-circle text-5xl mb-2 text-indigo-500/40"></i>
+                        <p class="text-sm">Select a channel to start streaming</p>
                     </div>
-                    
-                    <!-- Core Video Tag -->
-                    <video id="iptv-player" class="video-js vjs-default-skin w-full h-full object-contain" controls preload="auto" data-setup='{}'></video>
+                    <video id="iptv-player" class="video-js vjs-default-skin w-full h-full" controls preload="auto" data-setup='{}'></video>
                 </div>
 
+                <!-- Active Channel Info Footer -->
+                <div id="activeChannelInfo" class="p-4 bg-slate-900/50 border-t border-slate-800 hidden">
+                    <div class="flex items-center gap-3">
+                        <img id="activeLogo" src="" alt="" class="w-10 h-10 object-contain bg-slate-800 p-1 rounded border border-slate-700">
+                        <div>
+                            <div class="text-xs font-mono text-indigo-400" id="activeNumber">Ch --</div>
+                            <h4 class="font-bold text-white text-sm" id="activeName">No Channel Selected</h4>
+                        </div>
+                    </div>
+                </div>
             </section>
 
         </main>
     </div>
 
     <script>
-        // --- Channels Database ---
-        // আপনার দেওয়া নতুন কার্টুন নেটওয়ার্ক চ্যানেলটি এখানে প্রথম আইটেম হিসেবে যুক্ত করা হয়েছে।
+        // --- 1. Your Custom Channel Database ---
+        // আপনি এখানে আপনার চ্যানেলের নাম, লগো, গ্রুপ এবং নাম্বার পরিবর্তন করতে পারবেন।
         const channels = [
-            { 
-                id: 1, 
-                number: "01", 
-                name: "Cartoon Network", 
-                group: "Kids", 
-                logo: "https://i.ibb.co.com/8B0Lpzd/1000021166.png", 
-                url: "https://vodzong.mjunoon.tv:8087/streamtest/cartoon-network-87/playlist.m3u8" 
-            },
-            { 
-                id: 2, 
-                number: "02", 
-                name: "Somoy TV (Demo)", 
-                group: "News", 
-                logo: "https://www.somoynews.tv/themes/somoy/images/logo.png", 
-                url: "https://example.com/live/somoy.m3u8" 
-            },
-            { 
-                id: 3, 
-                number: "03", 
-                name: "Sony Sports 1 (Demo)", 
-                group: "Sports", 
-                logo: "https://upload.wikimedia.org/wikipedia/commons/2/23/Sony_Sports_Network_logo.png", 
-                url: "https://example.com/live/sonysports1.m3u8" 
-            }
+            { id: 1, number: "101", name: "Somoy TV", group: "News", logo: "https://www.somoynews.tv/themes/somoy/images/logo.png", url: "https://example.com/live/somoy.m3u8" },
+            { id: 2, number: "102", name: "Independent TV", group: "News", logo: "https://upload.wikimedia.org/wikipedia/en/2/2c/Independent_Television_logo.png", url: "https://example.com/live/independent.m3u8" },
+            { id: 3, number: "201", name: "Sony Sports 1", group: "Sports", logo: "https://upload.wikimedia.org/wikipedia/commons/2/23/Sony_Sports_Network_logo.png", url: "https://example.com/live/sonysports1.m3u8" },
+            { id: 4, number: "202", name: "T Sports", group: "Sports", logo: "https://upload.wikimedia.org/wikipedia/en/e/ed/TSports_logo.png", url: "https://example.com/live/tsports.m3u8" },
+            { id: 5, number: "301", name: "Cartoon Network", group: "Kids", logo: "https://upload.wikimedia.org/wikipedia/commons/b/bb/Cartoon_Network_2010_logo.svg", url: "https://example.com/live/cn.m3u8" },
+            { id: 6, number: "401", name: "HBO HD", group: "Movies", logo: "https://upload.wikimedia.org/wikipedia/commons/d/de/HBO_logo.svg", url: "https://example.com/live/hbo.m3u8" }
         ];
 
         let selectedCategory = "All";
         let searchQuery = "";
         let player;
 
+        // Initialize Player & App
         document.addEventListener('DOMContentLoaded', () => {
             player = videojs('iptv-player');
             renderGroups();
             renderChannels();
 
+            // Search event listener
             document.getElementById('searchBar').addEventListener('input', (e) => {
                 searchQuery = e.target.value.toLowerCase();
                 renderChannels();
             });
         });
 
-        // Render Categories
+        // Render Sidebar Category/Groups
         function renderGroups() {
             const groupList = document.getElementById('groupList');
             const groups = ['All', ...new Set(channels.map(ch => ch.group))];
@@ -152,6 +149,7 @@
             }).join('');
         }
 
+        // Change Active Category
         function filterCategory(category) {
             selectedCategory = category;
             document.getElementById('currentCategoryTitle').innerHTML = `<i class="fa-solid fa-layer-group text-indigo-400"></i> ${category} Channels`;
@@ -159,10 +157,11 @@
             renderChannels();
         }
 
-        // Render Grid
+        // Render Channels Grid
         function renderChannels() {
             const grid = document.getElementById('channelsGrid');
             
+            // Filter Logic
             const filteredChannels = channels.filter(channel => {
                 const matchesCategory = selectedCategory === 'All' || channel.group === selectedCategory;
                 const matchesSearch = channel.name.toLowerCase().includes(searchQuery) || channel.number.includes(searchQuery);
@@ -190,15 +189,22 @@
             `).join('');
         }
 
-        // Stream Handler
+        // Play Selected Channel Stream
         function playChannel(id) {
             const channel = channels.find(c => c.id === id);
             if(!channel) return;
 
-            // Hide Placeholder Screen
+            // Hide Placeholder
             document.getElementById('playerPlaceholder').classList.add('hidden');
             
-            // Set stream source
+            // Update Footer Info
+            const footer = document.getElementById('activeChannelInfo');
+            footer.classList.remove('hidden');
+            document.getElementById('activeLogo').src = channel.logo;
+            document.getElementById('activeNumber').innerText = `Ch ${channel.number}`;
+            document.getElementById('activeName').innerText = channel.name;
+
+            // Load Video Source in Video.js (Supports .m3u8 HLS Streams)
             player.src({
                 src: channel.url,
                 type: 'application/x-mpegURL'
