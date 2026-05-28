@@ -1,284 +1,283 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jahangir IPTV Premium - Ready Live TV</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.10.0/video-js.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.10.0/video.min.js"></script>
-
+    <title>আমার IPTV প্লেয়ার</title>
+    <!-- Video.js CSS লাইভ স্ট্রিম প্লে করার জন্য -->
+    <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
     <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #334155; }
-        
-        /* Premium Clean Big Player Style */
-        .video-js { font-family: sans-serif !important; color: #fff !important; width: 100% !important; height: 100% !important; background-color: #000 !important; }
-        .video-js .vjs-big-play-button { background-color: #4f46e5 !important; border-radius: 50% !important; width: 2.3em !important; height: 2.3em !important; line-height: 2.3em !important; margin-top: -1.15em !important; margin-left: -1.15em !important; border: none !important; }
-        .vjs-control-bar { background-color: rgba(15, 23, 42, 0.95) !important; backdrop-filter: blur(10px); }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #11141a;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        header h1 {
+            color: #00ff88;
+            font-size: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        /* প্লেয়ার সেকশন */
+        .player-section {
+            background-color: #1a1f29;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .video-container {
+            position: relative;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        .video-js {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .current-channel-info {
+            margin-top: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        /* চ্যানেল লিস্ট সেকশন */
+        .channel-section {
+            background-color: #1a1f29;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .channel-section h2 {
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            border-left: 4px solid #00ff88;
+            padding-left: 10px;
+        }
+
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        /* স্ক্রোলবার কাস্টমাইজেশন */
+        .channel-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+        .channel-grid::-webkit-scrollbar-thumb {
+            background-color: #333d4f;
+            border-radius: 4px;
+        }
+
+        /* চ্যানেল কার্ড স্টাইল */
+        .channel-card {
+            background-color: #252d3d;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .channel-card:hover {
+            transform: translateY(-5px);
+            border-color: #00ff88;
+            background-color: #2c374b;
+        }
+
+        .channel-number {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background-color: #00ff88;
+            color: #11141a;
+            font-weight: bold;
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .channel-logo {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            margin: 10px auto;
+            display: block;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 5px;
+        }
+
+        .channel-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-top: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* রেসপনসিভ লেআউট (ডেস্কটপ স্ক্রিনের জন্য সাইড-বাই-সাইড) */
+        @media (min-width: 850px) {
+            .container {
+                grid-template-columns: 65% 35%;
+                align-items: start;
+            }
+            .channel-grid {
+                max-height: 65vh;
+            }
+        }
     </style>
 </head>
-<body class="bg-[#070a13] text-slate-100 font-sans h-screen flex flex-col overflow-hidden select-none">
+<body>
 
-    <header class="bg-[#0f1524] border-b border-slate-800/80 px-6 py-3 flex items-center justify-between shrink-0 shadow-lg z-20">
-        <div class="flex items-center gap-3">
-            <i class="fa-solid fa-play text-indigo-500 text-xl animate-pulse"></i>
-            <h1 class="text-lg font-bold tracking-wide text-white">Jahangir <span class="text-indigo-400">IPTV PRO HD</span></h1>
-        </div>
-
-        <div class="w-full max-w-md mx-4">
-            <div class="relative">
-                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                <input type="text" id="searchBox" placeholder="Type name or channel number..." class="w-full bg-[#070a13] border border-slate-700/80 rounded-full pl-9 pr-4 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 transition-colors">
-            </div>
-        </div>
-
-        <div class="hidden md:block text-[11px] bg-indigo-950/60 border border-indigo-900/50 text-indigo-300 px-3 py-1.5 rounded-xl">
-            <i class="fa-solid fa-keyboard mr-1"></i> Press <b class="text-white font-mono">1, 2, 12, 13, 14</b> on Keyboard to Switch
-        </div>
+    <header>
+        <h1>লাইভ IPTV প্লেয়ার</h1>
     </header>
 
-    <div class="flex flex-1 overflow-hidden relative">
+    <div class="container">
         
-        <aside class="w-44 lg:w-52 bg-[#0f1524] border-r border-slate-800/60 flex flex-col shrink-0 z-10">
-            <div class="p-3 border-b border-slate-800/40">
-                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Categories</h2>
+        <!-- প্লেয়ার উইন্ডো -->
+        <div class="player-section">
+            <div class="video-container">
+                <video id="my-video" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto">
+                    <p class="vjs-no-js">
+                        ভিডিও দেখতে আপনার ব্রাউজারে জাভাস্ক্রিপ্ট সচল করুন।
+                    </p>
+                </video>
             </div>
-            <div id="groupList" class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
-                </div>
-        </aside>
-
-        <div class="w-[28%] min-w-[270px] bg-[#070a13] border-r border-slate-800/60 flex flex-col overflow-hidden p-3 z-10">
-            <div class="flex items-center justify-between mb-3 px-1">
-                <h2 id="currentCategoryTitle" class="text-xs font-bold text-slate-300 uppercase tracking-wider truncate">
-                    <i class="fa-solid fa-layer-group text-indigo-400 mr-1"></i> All Channels
-                </h2>
-                <span id="channelCount" class="text-[10px] bg-indigo-950 text-indigo-300 px-2 py-0.5 rounded-md border border-indigo-900/40 font-mono font-bold">0</span>
+            <div class="current-channel-info" id="playing-now">
+                এখন প্লে হচ্ছে: কোনো চ্যানেল সিলেক্ট করা নেই
             </div>
-
-            <div id="channelsGrid" class="flex-1 overflow-y-auto custom-scrollbar grid grid-cols-2 gap-2.5 content-start pb-4">
-                </div>
         </div>
 
-        <main class="flex-1 bg-black flex flex-col relative justify-center items-center overflow-hidden z-10">
-            
-            <div id="channelOverlay" class="absolute top-5 left-5 bg-slate-900/95 backdrop-blur border border-indigo-500/40 px-5 py-2.5 rounded-xl flex items-center gap-3 z-30 opacity-0 pointer-events-none transition-all duration-300 shadow-2xl">
-                <div class="text-2xl font-black font-mono text-indigo-400" id="overlayNumber">00</div>
-                <div class="h-6 w-[1px] bg-slate-800"></div>
-                <div class="text-xs font-bold text-white tracking-wide" id="overlayName">Loading Stream...</div>
+        <!-- চ্যানেল লিস্ট গ্রিড -->
+        <div class="channel-section">
+            <h2>চ্যানেল সমূহ</h2>
+            <div class="channel-grid" id="channel-list">
+                <!-- জাভাস্ক্রিপ্ট দিয়ে এখানে চ্যানেলগুলো লোড হবে -->
             </div>
+        </div>
 
-            <div id="remoteTypingOverlay" class="absolute bg-indigo-600 border border-indigo-400 text-white font-mono font-black text-4xl px-8 py-4 rounded-2xl z-40 shadow-2xl hidden">
-                <span class="text-[10px] text-indigo-200 block font-sans font-bold tracking-widest uppercase mb-1">REMOTE INPUT</span>
-                CH <span id="remoteLiveNumber" class="text-yellow-300"></span>
-            </div>
-
-            <div class="w-full h-full relative bg-black flex items-center justify-center">
-                <div id="playerPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 p-6 text-center bg-gradient-to-b from-[#0f1524] via-[#070a13] to-black z-10">
-                    <i class="fa-solid fa-circle-play text-4xl text-indigo-500/20 mb-2 animate-pulse"></i>
-                    <p class="text-xs font-bold text-slate-300">Jahangir IPTV Player Active</p>
-                    <p class="text-[10px] text-slate-600 mt-1 max-w-xs">Select any channel from the list, or directly type channel numbers like <span class="text-indigo-400 font-bold font-mono">1, 2, 12, 13, 14</span> on your keyboard.</p>
-                </div>
-                
-                <video id="iptv-cinema-player" class="video-js vjs-default-skin w-full h-full object-contain" controls preload="auto"></video>
-            </div>
-
-        </main>
     </div>
 
+    <!-- Video.js এবং HLS প্লাগইন (লাইভ স্ট্রিম খেলার জন্য) -->
+    <script src="https://vjs.zencdn.net/7.20.3/video.js"></script>
+    
     <script>
-        // --- PRE-LOADED CHANNELS DATABASE (এখানে আপনার সব চ্যানেল এড করা থাকবে) ---
+        // এখানে আপনার চ্যানেলগুলোর নম্বর, নাম, লোগো এবং .m3u8 বা লাইভ লিংক বসান
         const channels = [
-            { 
-                id: 1, 
-                number: "1", 
-                name: "Cartoon Network", 
-                group: "Kids", 
-                logo: "https://i.ibb.co.com/8B0Lpzd/1000021166.png", 
-                url: "https://vodzong.mjunoon.tv:8087/streamtest/cartoon-network-87/playlist.m3u8" 
+            {
+                number: "01",
+                name: "Somoy TV",
+                logo: "https://images.prothomalo.com/prothomalo-bangla/2021-02/ca5fa699-f2e7-49f3-8b7c-d64e9e04892c/Somoy_TV.jpg",
+                link: "https://your-stream-link-here.com/live/somoy.m3u8" // আপনার আসল m3u8 লিংক দিন
             },
-            { 
-                id: 2, 
-                number: "2", 
-                name: "Somoy TV HD", 
-                group: "News", 
-                logo: "https://www.somoynews.tv/themes/somoy/images/logo.png", 
-                url: "https://vodzong.mjunoon.tv:8087/streamtest/cartoon-network-87/playlist.m3u8" // টেস্ট করার জন্য লিংক দেওয়া, আপনার লিংক এখানে বসাবেন
+            {
+                number: "02",
+                name: "Jamuna TV",
+                logo: "https://www.jamuna.tv/wp-content/uploads/2023/11/jtv-logo.png",
+                link: "https://your-stream-link-here.com/live/jamuna.m3u8"
             },
-            { 
-                id: 12, 
-                number: "12", 
-                name: "Sony Sports 1", 
-                group: "Sports", 
-                logo: "https://upload.wikimedia.org/wikipedia/commons/2/23/Sony_Sports_Network_logo.png", 
-                url: "https://vodzong.mjunoon.tv:8087/streamtest/cartoon-network-87/playlist.m3u8"
-            },
-            { 
-                id: 13, 
-                number: "13", 
-                name: "Pogo TV", 
-                group: "Kids", 
-                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Pogo_tv_logo.svg/1200px-Pogo_tv_logo.svg.png", 
-                url: "https://vodzong.mjunoon.tv:8087/streamtest/cartoon-network-87/playlist.m3u8"
-            },
-            { 
-                id: 14, 
-                number: "14", 
-                name: "Independent TV", 
-                group: "News", 
-                logo: "https://www.itvbd.com/templates/default/images/logo.png", 
-                url: "https://vodzong.mjunoon.tv:8087/streamtest/cartoon-network-87/playlist.m3u8"
+            {
+                number: "03",
+                name: "Sony Sports 1",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Sony_Sports_Network_logo.png",
+                link: "https://your-stream-link-here.com/live/sonysports.m3u8"
             }
+            // এভাবে আপনি আরও যত খুশি চ্যানেল নিচে অবজেক্ট তৈরি করে যোগ করতে পারবেন
         ];
 
-        let selectedCategory = "All";
-        let searchFilterQuery = "";
-        let player;
-
-        // Remote sequential keyboard input configuration
-        let keypressBuffer = "";
-        let keypressTimer = null;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // Setup Video Engine
-            player = videojs('iptv-cinema-player', {
-                html5: { vhs: { overrideNative: true } }
-            });
-
-            // Initial Render
-            renderGroups();
-            renderChannelsGrid();
-
-            // Search Bar Input Listener
-            document.getElementById('searchBox').addEventListener('input', (e) => {
-                searchFilterQuery = e.target.value.toLowerCase();
-                renderChannelsGrid();
-            });
-
-            // ⌨️ MULTI-DIGIT ADVANCED KEYBOARD CONTROLLER (1, 2, 12, 13, 14 etc.)
-            document.addEventListener('keydown', (e) => {
-                if (document.activeElement.tagName === 'INPUT') return;
-
-                // Capture digits 0 to 9
-                if (e.key >= '0' && e.key <= '9') {
-                    clearTimeout(keypressTimer);
-                    keypressBuffer += e.key;
-
-                    // Trigger and flash typing box on screen center
-                    const typingBox = document.getElementById('remoteTypingOverlay');
-                    document.getElementById('remoteLiveNumber').innerText = keypressBuffer;
-                    typingBox.classList.remove('hidden');
-
-                    // 1.2 Seconds buffer speed for multi digit entries
-                    keypressTimer = setTimeout(() => {
-                        executeRemoteChannelSwitch(keypressBuffer);
-                        keypressBuffer = ""; // Flush out buffer string
-                        typingBox.classList.add('hidden');
-                    }, 1200);
-                }
-            });
+        // Video.js প্লেয়ার ইনিশিয়ালাইজ করা
+        const player = videojs('my-video', {
+            fluid: true,
+            autoplay: false,
+            controls: true
         });
 
-        // Query typed value inside available data array mapping
-        function executeRemoteChannelSwitch(bufferedNumberString) {
-            const cleanIntString = String(parseInt(bufferedNumberString, 10));
-            const targetedChannel = channels.find(ch => String(ch.number) === cleanIntString);
+        const channelListContainer = document.getElementById('channel-list');
+        const playingNowText = document.getElementById('playing-now');
 
-            if (targetedChannel) {
-                playChannel(targetedChannel.id);
-            } else {
-                alert(`Channel number ${cleanIntString} does not exist in the list!`);
-            }
-        }
-
-        // Render Sidebar Groups
-        function renderGroups() {
-            const groupList = document.getElementById('groupList');
-            const uniqueGroups = ['All', ...new Set(channels.map(ch => ch.group))];
-            
-            groupList.innerHTML = uniqueGroups.map(grp => {
-                const isActive = selectedCategory === grp;
-                const count = grp === 'All' ? channels.length : channels.filter(c => c.group === grp).length;
+        // চ্যানেলগুলো স্ক্রিনে রেন্ডার করার ফাংশন
+        function loadChannels() {
+            channels.forEach((channel) => {
+                const card = document.createElement('div');
+                card.className = 'channel-card';
                 
-                return `
-                    <button onclick="filterCategory('${grp}')" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 text-left ${isActive ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/10' : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200'}">
-                        <span class="truncate pr-1">${grp}</span>
-                        <span class="text-[10px] px-1.5 py-0.2 rounded bg-slate-950/40 text-slate-400">${count}</span>
-                    </button>
+                card.innerHTML = `
+                    <span class="channel-number">${channel.number}</span>
+                    <img class="channel-logo" src="${channel.logo}" alt="${channel.name} Logo" onerror="this.src='https://via.placeholder.com/70?text=No+Logo'">
+                    <div class="channel-name">${channel.name}</div>
                 `;
-            }).join('');
-        }
 
-        function filterCategory(category) {
-            selectedCategory = category;
-            document.getElementById('currentCategoryTitle').innerHTML = `<i class="fa-solid fa-layer-group text-indigo-400 mr-1"></i> ${category}`;
-            renderGroups();
-            renderChannelsGrid();
-        }
+                // কার্ডে ক্লিক করলে চ্যানেল প্লে হবে
+                card.addEventListener('click', () => {
+                    playChannel(channel);
+                });
 
-        // Render Sidebar Box Items List (Your exact grid style)
-        function renderChannelsGrid() {
-            const grid = document.getElementById('channelsGrid');
-            
-            const filtered = channels.filter(ch => {
-                const matchesCategory = selectedCategory === 'All' || ch.group === selectedCategory;
-                const matchesSearch = ch.name.toLowerCase().includes(searchFilterQuery) || ch.number.includes(searchFilterQuery);
-                return matchesCategory && matchesSearch;
+                channelListContainer.appendChild(card);
             });
-
-            document.getElementById('channelCount').innerText = filtered.length;
-
-            if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-600 text-xs">No channels found</div>`;
-                return;
-            }
-
-            grid.innerHTML = filtered.map(ch => {
-                const isCurrentPlay = activeChannelId === ch.id;
-                return `
-                    <div onclick="playChannel(${ch.id})" class="bg-[#0f1524] border ${isCurrentPlay ? 'border-indigo-500 bg-[#141c30]' : 'border-slate-800/80'} hover:border-indigo-500/70 rounded-2xl p-2.5 flex flex-col items-center justify-between text-center cursor-pointer hover:bg-[#131b2e] transition-all duration-150 group relative overflow-hidden aspect-square shadow">
-                        <span class="absolute top-1.5 left-1.5 text-[9px] font-mono font-bold bg-slate-950/80 text-indigo-400 px-1.5 py-0.5 rounded border border-slate-800/40">Ch ${ch.number}</span>
-                        <div class="w-12 h-12 flex items-center justify-center my-auto">
-                            <img src="${ch.logo}" alt="" onerror="this.src='https://placehold.co/80x80/070a13/cbd5e1?text=TV'" class="max-w-full max-h-full object-contain filter drop-shadow group-hover:scale-105 transition-transform">
-                        </div>
-                        <h3 class="w-full text-[10px] font-bold text-slate-300 group-hover:text-indigo-400 transition-colors truncate px-0.5">${ch.name}</h3>
-                    </div>
-                `;
-            }).join('');
         }
 
-        // Action Trigger: Active Stream URL Playback
-        function playChannel(id) {
-            const channel = channels.find(c => c.id === id);
-            if (!channel) return;
-
-            activeChannelId = id;
-            document.getElementById('playerPlaceholder').classList.add('hidden');
+        // চ্যানেল প্লে করার ফাংশন
+        function playChannel(channel) {
+            playingNowText.innerText = `এখন প্লে হচ্ছে: [${channel.number}] ${channel.name}`;
             
-            // Stream URL setup inside Video.js core engine
             player.src({
-                src: channel.url,
+                src: channel.link,
+                type: 'application/x-mpegURL' // HLS বা m3u8 স্ট্রিমের জন্য এই টাইপ জরুরি
+            });
+            
+            player.play();
+            
+            // মোবাইল স্ক্রিনে ক্লিক করার পর যাতে স্ক্রোল করে প্লেয়ারের কাছে চলে যায়
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // প্রথমবার পেজ লোড হলে চ্যানেল লিস্ট দেখাবে
+        loadChannels();
+        
+        // ডিফল্টভাবে প্রথম চ্যানেলটি সেট করে রাখা (প্লে হবে না, জাস্ট রেডি থাকবে)
+        if(channels.length > 0) {
+            player.src({
+                src: channels[0].link,
                 type: 'application/x-mpegURL'
             });
-            player.play();
-            renderChannelsGrid();
-
-            // Flash notification banner box over the video layout top edge
-            const overlay = document.getElementById('channelOverlay');
-            document.getElementById('overlayNumber').innerText = channel.number;
-            document.getElementById('overlayName').innerText = channel.name;
-            
-            overlay.classList.remove('opacity-0', 'pointer-events-none');
-            overlay.classList.add('opacity-100');
-            
-            setTimeout(() => {
-                overlay.classList.remove('opacity-100');
-                overlay.classList.add('opacity-0', 'pointer-events-none');
-            }, 2500);
+            playingNowText.innerText = `চ্যানেল সিলেক্ট করুন (প্রথম চ্যানেল রেডি আছে: ${channels[0].name})`;
         }
     </script>
 </body>
