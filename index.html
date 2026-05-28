@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>আমার অল-চ্যানেল IPTV প্লেয়ার</title>
+    <title>প্রো IPTV প্লেয়ার</title>
     <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
     <style>
         * {
@@ -68,30 +68,79 @@
             color: #00ff88;
         }
 
-        /* চ্যানেল লিস্ট সেকশন */
+        /* চ্যানেল কন্ট্রোল এবং লিস্ট সেকশন */
         .channel-section {
             background-color: #1a1f29;
             padding: 20px;
             border-radius: 12px;
         }
 
-        .channel-section h2 {
-            margin-bottom: 15px;
-            font-size: 1.4rem;
-            border-left: 4px solid #00ff88;
-            padding-left: 10px;
+        /* সার্চ ও গ্রুপ ফিল্টার স্টাইল */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #252d3d;
+            border-radius: 8px;
+            background-color: #11141a;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .search-box:focus {
+            border-color: #00ff88;
+        }
+
+        .groups-container {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        /* স্ক্রোলবার হাইড করার জন্য */
+        .groups-container::-webkit-scrollbar {
+            height: 4px;
+        }
+        .groups-container::-webkit-scrollbar-thumb {
+            background-color: #333d4f;
+            border-radius: 2px;
+        }
+
+        .group-btn {
+            background-color: #252d3d;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+
+        .group-btn.active, .group-btn:hover {
+            background-color: #00ff88;
+            color: #11141a;
         }
 
         .channel-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
             gap: 15px;
-            max-height: 550px;
+            max-height: 500px;
             overflow-y: auto;
             padding-right: 5px;
         }
 
-        /* স্ক্রোলবার কাস্টমাইজেশন */
         .channel-grid::-webkit-scrollbar {
             width: 6px;
         }
@@ -113,7 +162,7 @@
         }
 
         .channel-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
             border-color: #00ff88;
             background-color: #2c374b;
         }
@@ -130,11 +179,32 @@
             border-radius: 4px;
         }
 
+        /* ফেভারিট হার্ট আইকন */
+        .fav-btn {
+            position: absolute;
+            top: 6px;
+            right: 8px;
+            font-size: 1.2rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #55627a;
+            transition: transform 0.2s;
+        }
+
+        .fav-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .fav-btn.is-fav {
+            color: #ff3838;
+        }
+
         .channel-logo {
-            width: 80px;
-            height: 80px;
+            width: 75px;
+            height: 75px;
             object-fit: contain;
-            margin: 10px auto;
+            margin: 15px auto 8px auto;
             display: block;
             background-color: #fff;
             border-radius: 8px;
@@ -144,10 +214,17 @@
         .channel-name {
             font-size: 0.9rem;
             font-weight: 600;
-            margin-top: 5px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+
+        .no-channels {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 30px;
+            color: #888;
+            font-size: 1.1rem;
         }
 
         /* রেসপনসিভ লেআউট (ডেস্কটপ স্ক্রিনের জন্য সাইড-বাই-সাইড) */
@@ -157,7 +234,7 @@
                 align-items: start;
             }
             .channel-grid {
-                max-height: 70vh;
+                max-height: 65vh;
             }
         }
     </style>
@@ -165,7 +242,7 @@
 <body>
 
     <header>
-        <h1>লাইভ IPTV প্লেয়ার (CORS বাইপাস যুক্ত)</h1>
+        <h1>লাইভ IPTV প্লেয়ার প্রিমিয়াম</h1>
     </header>
 
     <div class="container">
@@ -184,7 +261,20 @@
         </div>
 
         <div class="channel-section">
-            <h2>চ্যানেল সমূহ</h2>
+            
+            <div class="controls">
+                <input type="text" id="search-input" class="search-box" placeholder="চ্যানেলের নাম বা নম্বর লিখে খুঁজুন... (যেমন: 02)">
+                
+                <div class="groups-container" id="groups-container">
+                    <button class="group-btn active" data-group="all">All</button>
+                    <button class="group-btn" data-group="fav">❤️ Favorites</button>
+                    <button class="group-btn" data-group="Bangla">Bangla</button>
+                    <button class="group-btn" data-group="Movies">Movies</button>
+                    <button class="group-btn" data-group="Music">Music</button>
+                    <button class="group-btn" data-group="Kids">Kids</button>
+                </div>
+            </div>
+
             <div class="channel-grid" id="channel-list">
                 </div>
         </div>
@@ -194,41 +284,44 @@
     <script src="https://vjs.zencdn.net/7.20.3/video.js"></script>
     
     <script>
-        // একটি ওপেন-সোর্স CORS প্রক্সি সার্ভার (যা ব্লকিং এড়িয়ে লিঙ্ক লোড করতে সাহায্য করবে)
-        const corsProxy = "https://cors-anywhere.herokuapp.com/";
+        // ফেভারিট চ্যানেলগুলো ব্রাউজার মেমোরিতে (LocalStorage) সেভ রাখার জন্য
+        let favoriteChannels = JSON.parse(localStorage.getItem('iptv_favs')) || [];
 
-        // আপনার সবগুলো চ্যানেল লিস্ট
+        // আপনার সবগুলো চ্যানেল ক্যাটাগরি বা গ্রুপ সহ সাজানো
         const channels = [
-            { number: "01", name: "BTV", logo: "", link: "https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/index.m3u8" },
-            { number: "02", name: "Jamuna TV", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUGV6AowX_8QpJuAchdiiAZzAFJYZGYhBzVQ&s", link: "https://owrcovcrpy.gpcdn.net/bpk-tv/1701/output/index.m3u8" },
-            { number: "03", name: "Channel 24", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRztkZpAI3G-n4HsjZv2hkqQdcy1nRaGHlErA&s", link: "https://owrcovcrpy.gpcdn.net/bpk-tv/1703/output/index.m3u8" },
-            { number: "04", name: "Maasranga", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIPhCXYx8nmlx5myoXQGQQnxmn6Vol1z_gx9zDIH3A-GeyGbfvoq_--SE&s=10", link: "http://mtv.sunplex.live/MAASRANGA-TV/index.m3u8" },
-            { number: "05", name: "MY TV HD", logo: "https://i.ibb.co/WfjvRsn/Picsart-23-06-07-11-07-21-738.png", link: "https://mytvbangla.com/0.m3u8" },
-            { number: "06", name: "DEEPTO TV", logo: "https://i.ibb.co/bbYQfNr/Picsart-23-06-07-10-24-56-525.png", link: "https://byphdgllyk.gpcdn.net/hls/deeptotv/index.m3u8" },
-            { number: "07", name: "MOVIE BANGLA", logo: "https://i.ibb.co/Tr1FsLp/Picsart-23-06-07-11-09-56-678.png", link: "http://alvetv.com/moviebanglatv/8080/index.m3u8" },
-            { number: "08", name: "Ekushey", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQk_4EUXm16T6Jwq2Xbs4aBojuYHjXIl-fwftK1G8YexEPQ4S5zasmLFMs&s=10", link: "http://live.ekushey-tv.com/hls-live/livepkgr/_definst_/liveevent/livestream3.m3u8" },
-            { number: "09", name: "Aamar Bangla (720p)", logo: "https://www.jagobd.com/wp-content/uploads/2022/07/Aamar-Bangla.jpg", link: "https://live-stream.utkalbongo.com/utkalbongo/stream10/hls/amarbangla.m3u8" },
-            { number: "10", name: "Aakaash Aath (720p)", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHL2cLD63aIFVGSfiVcNjON-bsL1oB3VDNdA&s", link: "https://cdn-4.pishow.tv/live/969/master.m3u8" },
-            { number: "11", name: "TARA BANGLA CINEMA", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkMaPLaW25iw7db5DrftICZ0d3RLQnbCNO-3UqRYy83RHADDqYcXAiDRJH&s=10", link: "http://103.145.48.150:90/laosat24/taratv/index.m3u8" },
-            { number: "12", name: "YRF Music HD", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2JB6Ys79FRoMid_9C62MN6xwNysfonAtEKA&s", link: "https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg01412-xiaomiasia-yrfmusic-xiaomi/playlist.m3u8" },
-            { number: "13", name: "Sangeet Bangla (720p)", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOXB3cxB0MES2vegMKOS1nPEgIalWkARAJsSLmLcBPTfgo4Ocd4tUaWQOO&s=10", link: "https://cdn-4.pishow.tv/live/1143/master.m3u8" },
-            { number: "14", name: "Cartoon Network", logo: "https://i.ibb.co.com/8B0Lpzd/1000021166.png", link: "https://vodzong.mjunoon.tv:8087/streamtest/cartoon-network-87/playlist.m3u8" },
-            { number: "15", name: "Gubbare (1080p)", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5ihF02BBk_kJsXS7VfY5I7M4E0ebijozBdmU1q1OYlTHj5pA9VU_TaZk&s=10", link: "https://epiconvh.akamaized.net/live/gubbare/master.m3u8" },
-            { number: "16", name: "Rongeen TV", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTpcqmYeSQWivpQzsZt7ihjB1LYtdbJi6qNzAxBdFrRYqNWv_CIbDI84_K&s=10xaA", link: "https://server.thelegitpro.in/rongeentv/rongeentv/tracks-v1a1/mono.m3u8" },
-            { number: "17", name: "Jungle Book", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGdKH7Le-kqTMpSS_l4bVwDi9Lcckokq2oZJxvtZTlYyLu0adlxCBFUrc&s=10", link: "https://cc-4bhi5osabejc9.akamaized.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-4bhi5osabejc9/junglebook.m3u8" },
-            { number: "18", name: "SHEEMAROO BOLLYWOOD", logo: "https://i.ibb.co/KjjqnRH/Picsart-23-06-30-21-35-20-283.png", link: "https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg00864-shemarooenterta-shemabollywood-ono/playlist.m3u8" },
-            { number: "19", name: "BOLLYWOOD HD", logo: "https://i.ibb.co/YNGyQJR/Picsart-23-06-25-22-19-02-657.png", link: "https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/bollywood-hd/manifest.m3u8" },
-            { number: "20", name: "CLASSIC BOLLYWOOD", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSeAgkUzr5OzWeRi0Zszfb7sNN-26QhQm0cujHpbNArZa-qRrfZGD54BL8&s=10", link: "https://d35j504z0x2vu2.cloudfront.net:443/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/bollywood-classic/manifest.m3u8" },
-            { number: "21", name: "B4U Movies India (1080p)", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGcicwnkcj82wLqE5t74_BgOldWOVUm1PT2_jIdG1guc5RXakI17h0PUY&s=10", link: "https://cdnb4u.wiseplayout.com/B4U_Movies/master.m3u8" },
-            { number: "22", name: "GOLDMINES", logo: "https://static.wikia.nocookie.net/logopedia/images/6/66/Goldmines_Logo.png", link: "https://cdn-2.pishow.tv/live/1459/master.m3u8" },
-            { number: "23", name: "GOLDMINES MOVIES", logo: "https://yt3.googleusercontent.com/d66J-MMZ06-55gkF5maclPGB5f5j1L0SAs3iWnl3lhoswlWrJ67wD2a3mZGkgHgt-W3kMrIT=s900-c-k-c0x00ffffff-no-rj", link: "https://cdn-2.pishow.tv/live/1461/master.m3u8" },
-            { number: "24", name: "&TV (1080p)", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLRAXh5Fkd5YeGHnH5cinl9oJkZYD6rSAcog&s", link: "https://amg01117-amg01117c1-amgplt0165.playout.now3.amagi.tv/playlist.m3u8" },
-            { number: "25", name: "SONY KAL HINDI", logo: "https://upload.wikimedia.org/wikipedia/hi/6/6e/Sony_Kal_Logo.jpeg", link: "https://spt-sonykal-1-us.lg.wurl.tv/playlist.m3u8" },
-            { number: "26", name: "9xm", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQogiI0ZhtYbSjXstxsTfj9b18B71Qhn8WlsUxvhya48ARy8ZVJNNrR7sNCPxjRgJBQIo17LDP_gQca-iryfA3R6B2cB64WQLmE3-ASmSOtiA", link: "https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/9xm/master.m3u8?ads.rnd=12345" },
-            { number: "27", name: "Music India", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVv4W8vUZYWP-CbojHbEgJzST2qclgnq6V06LV6BVvALbQiRlJUDb1PLoL&s=10", link: "https://cdn-2.pishow.tv/live/226/master.m3u8" }
+            { number: "01", name: "BTV", group: "Bangla", logo: "", link: "https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/index.m3u8" },
+            { number: "02", name: "Jamuna TV", group: "Bangla", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUGV6AowX_8QpJuAchdiiAZzAFJYZGYhBzVQ&s", link: "https://owrcovcrpy.gpcdn.net/bpk-tv/1701/output/index.m3u8" },
+            { number: "03", name: "Channel 24", group: "Bangla", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRztkZpAI3G-n4HsjZv2hkqQdcy1nRaGHlErA&s", link: "https://owrcovcrpy.gpcdn.net/bpk-tv/1703/output/index.m3u8" },
+            { number: "04", name: "Maasranga", group: "Bangla", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIPhCXYx8nmlx5myoXQGQQnxmn6Vol1z_gx9zDIH3A-GeyGbfvoq_--SE&s=10", link: "http://mtv.sunplex.live/MAASRANGA-TV/index.m3u8" },
+            { number: "05", name: "MY TV HD", group: "Bangla", logo: "https://i.ibb.co/WfjvRsn/Picsart-23-06-07-11-07-21-738.png", link: "https://mytvbangla.com/0.m3u8" },
+            { number: "06", name: "DEEPTO TV", group: "Bangla", logo: "https://i.ibb.co/bbYQfNr/Picsart-23-06-07-10-24-56-525.png", link: "https://byphdgllyk.gpcdn.net/hls/deeptotv/index.m3u8" },
+            { number: "07", name: "MOVIE BANGLA", group: "Movies", logo: "https://i.ibb.co/Tr1FsLp/Picsart-23-06-07-11-09-56-678.png", link: "http://alvetv.com/moviebanglatv/8080/index.m3u8" },
+            { number: "08", name: "Ekushey", group: "Bangla", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQk_4EUXm16T6Jwq2Xbs4aBojuYHjXIl-fwftK1G8YexEPQ4S5zasmLFMs&s=10", link: "http://live.ekushey-tv.com/hls-live/livepkgr/_definst_/liveevent/livestream3.m3u8" },
+            { number: "09", name: "Aamar Bangla (720p)", group: "Bangla", logo: "https://www.jagobd.com/wp-content/uploads/2022/07/Aamar-Bangla.jpg", link: "https://live-stream.utkalbongo.com/utkalbongo/stream10/hls/amarbangla.m3u8" },
+            { number: "10", name: "Aakaash Aath (720p)", group: "Bangla", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHL2cLD63aIFVGSfiVcNjON-bsL1oB3VDNdA&s", link: "https://cdn-4.pishow.tv/live/969/master.m3u8" },
+            { number: "11", name: "TARA BANGLA CINEMA", group: "Movies", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkMaPLaW25iw7db5DrftICZ0d3RLQnbCNO-3UqRYy83RHADDqYcXAiDRJH&s=10", link: "http://103.145.48.150:90/laosat24/taratv/index.m3u8" },
+            { number: "12", name: "YRF Music HD", group: "Music", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2JB6Ys79FRoMid_9C62MN6xwNysfonAtEKA&s", link: "https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg01412-xiaomiasia-yrfmusic-xiaomi/playlist.m3u8" },
+            { number: "13", name: "Sangeet Bangla (720p)", group: "Music", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOXB3cxB0MES2vegMKOS1nPEgIalWkARAJsSLmLcBPTfgo4Ocd4tUaWQOO&s=10", link: "https://cdn-4.pishow.tv/live/1143/master.m3u8" },
+            { number: "14", name: "Cartoon Network", group: "Kids", logo: "https://i.ibb.co.com/8B0Lpzd/1000021166.png", link: "https://vodzong.mjunoon.tv:8087/streamtest/cartoon-network-87/playlist.m3u8" },
+            { number: "15", name: "Gubbare (1080p)", group: "Kids", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5ihF02BBk_kJsXS7VfY5I7M4E0ebijozBdmU1q1OYlTHj5pA9VU_TaZk&s=10", link: "https://epiconvh.akamaized.net/live/gubbare/master.m3u8" },
+            { number: "16", name: "Rongeen TV", group: "Bangla", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTpcqmYeSQWivpQzsZt7ihjB1LYtdbJi6qNzAxBdFrRYqNWv_CIbDI84_K&s=10xaA", link: "https://server.thelegitpro.in/rongeentv/rongeentv/tracks-v1a1/mono.m3u8" },
+            { number: "17", name: "Jungle Book", group: "Kids", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGdKH7Le-kqTMpSS_l4bVwDi9Lcckokq2oZJxvtZTlYyLu0adlxCBFUrc&s=10", link: "https://cc-4bhi5osabejc9.akamaized.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-4bhi5osabejc9/junglebook.m3u8" },
+            { number: "18", name: "SHEEMAROO BOLLYWOOD", group: "Movies", logo: "https://i.ibb.co/KjjqnRH/Picsart-23-06-30-21-35-20-283.png", link: "https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg00864-shemarooenterta-shemabollywood-ono/playlist.m3u8" },
+            { number: "19", name: "BOLLYWOOD HD", group: "Movies", logo: "https://i.ibb.co/YNGyQJR/Picsart-23-06-25-22-19-02-657.png", link: "https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/bollywood-hd/manifest.m3u8" },
+            { number: "20", name: "CLASSIC BOLLYWOOD", group: "Movies", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSeAgkUzr5OzWeRi0Zszfb7sNN-26QhQm0cujHpbNArZa-qRrfZGD54BL8&s=10", link: "https://d35j504z0x2vu2.cloudfront.net:443/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/bollywood-classic/manifest.m3u8" },
+            { number: "21", name: "B4U Movies India (1080p)", group: "Movies", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGcicwnkcj82wLqE5t74_BgOldWOVUm1PT2_jIdG1guc5RXakI17h0PUY&s=10", link: "https://cdnb4u.wiseplayout.com/B4U_Movies/master.m3u8" },
+            { number: "22", name: "GOLDMINES", group: "Movies", logo: "https://static.wikia.nocookie.net/logopedia/images/6/66/Goldmines_Logo.png", link: "https://cdn-2.pishow.tv/live/1459/master.m3u8" },
+            { number: "23", name: "GOLDMINES MOVIES", group: "Movies", logo: "https://yt3.googleusercontent.com/d66J-MMZ06-55gkF5maclPGB5f5j1L0SAs3iWnl3lhoswlWrJ67wD2a3mZGkgHgt-W3kMrIT=s900-c-k-c0x00ffffff-no-rj", link: "https://cdn-2.pishow.tv/live/1461/master.m3u8" },
+            { number: "24", name: "&TV (1080p)", group: "Movies", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLRAXh5Fkd5YeGHnH5cinl9oJkZYD6rSAcog&s", link: "https://amg01117-amg01117c1-amgplt0165.playout.now3.amagi.tv/playlist.m3u8" },
+            { number: "25", name: "SONY KAL HINDI", group: "Movies", logo: "https://upload.wikimedia.org/wikipedia/hi/6/6e/Sony_Kal_Logo.jpeg", link: "https://spt-sonykal-1-us.lg.wurl.tv/playlist.m3u8" },
+            { number: "26", name: "9xm", group: "Music", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQogiI0ZhtYbSjXstxsTfj9b18B71Qhn8WlsUxvhya48ARy8ZVJNNrR7sNCPxjRgJBQIo17LDP_gQca-iryfA3R6B2cB64WQLmE3-ASmSOtiA", link: "https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/9xm/master.m3u8?ads.rnd=123" },
+            { number: "27", name: "Music India", group: "Music", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVv4W8vUZYWP-CbojHbEgJzST2qclgnq6V06LV6BVvALbQiRlJUDb1PLoL&s=10", link: "https://cdn-2.pishow.tv/live/226/master.m3u8" }
         ];
 
-        // Video.js প্লেয়ার সেটআপ
+        let currentGroup = "all";
+        let searchQuery = "";
+
+        // Video.js প্লেয়ার ইনিশিয়ালাইজ করা
         const player = videojs('my-video', {
             fluid: true,
             autoplay: false,
@@ -237,8 +330,130 @@
 
         const channelListContainer = document.getElementById('channel-list');
         const playingNowText = document.getElementById('playing-now');
+        const searchInput = document.getElementById('search-input');
+        const groupButtons = document.querySelectorAll('.group-btn');
 
-        // গ্রিডে সব চ্যানেল জেনারেট করার ফাংশন
-        function loadChannels() {
-            channels.forEach((channel) => {
+        // চ্যানেল গ্রিড রেন্ডার করার মেইন ফাংশন (ফিল্টারিং সহ)
+        function renderChannels() {
+            channelListContainer.innerHTML = ""; // আগের লিস্ট ক্লিয়ার করা
+
+            // ফিল্টারিং লজিক (Group + Search)
+            const filteredChannels = channels.filter(channel => {
+                // ১. গ্রুপ বা ফেভারিট ম্যাচিং
+                let matchesGroup = false;
+                if (currentGroup === "all") {
+                    matchesGroup = true;
+                } else if (currentGroup === "fav") {
+                    matchesGroup = favoriteChannels.includes(channel.number);
+                } else {
+                    matchesGroup = channel.group === currentGroup;
+                }
+
+                // ২. সার্চ কুয়েরি ম্যাচিং (নাম অথবা নম্বরে খুঁজবে)
+                const matchesSearch = channel.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                      channel.number.includes(searchQuery);
+
+                return matchesGroup && matchesSearch;
+            });
+
+            // যদি কোনো চ্যানেল না পাওয়া যায়
+            if (filteredChannels.length === 0) {
+                channelListContainer.innerHTML = `<div class="no-channels">কোনো চ্যানেল পাওয়া যায়নি!</div>`;
+                return;
+            }
+
+            // স্ক্রিনে কার্ডগুলো তৈরি করা
+            filteredChannels.forEach((channel) => {
+                const isFav = favoriteChannels.includes(channel.number);
                 const card = document.createElement('div');
+                card.className = 'channel-card';
+                
+                const logoSrc = channel.logo ? channel.logo : `https://via.placeholder.com/80/252d3d/ffffff?text=${encodeURIComponent(channel.name)}`;
+
+                card.innerHTML = `
+                    <span class="channel-number">${channel.number}</span>
+                    <button class="fav-btn ${isFav ? 'is-fav' : ''}" data-number="${channel.number}">
+                        ${isFav ? '❤️' : '🤍'}
+                    </button>
+                    <img class="channel-logo" src="${logoSrc}" alt="${channel.name} Logo" onerror="this.src='https://via.placeholder.com/80/252d3d/ffffff?text=TV'">
+                    <div class="channel-name" title="${channel.name}">${channel.name}</div>
+                `;
+
+                // কার্ডের লোগো বা নামের ওপর ক্লিক করলে প্লে হবে
+                card.addEventListener('click', (e) => {
+                    // যদি ফেভারিট বাটনে ক্লিক করা হয় তবে যাতে প্লে না হয়ে জাস্ট ফেভারিট টগল হয়
+                    if (e.target.classList.contains('fav-btn')) return;
+                    playChannel(channel);
+                });
+
+                // ফেভারিট বাটনের অ্যাকশন
+                const favBtn = card.querySelector('.fav-btn');
+                favBtn.addEventListener('click', (e) => {
+                    toggleFavorite(channel.number);
+                });
+
+                channelListContainer.appendChild(card);
+            });
+        }
+
+        // ফেভারিট অ্যাড/রিমুভ করার ফাংশন
+        function toggleFavorite(channelNumber) {
+            if (favoriteChannels.includes(channelNumber)) {
+                favoriteChannels = favoriteChannels.filter(num => num !== channelNumber);
+            } else {
+                favoriteChannels.push(channelNumber);
+            }
+            // LocalStorage এ ডেটা সেভ রাখা
+            localStorage.setItem('iptv_favs', JSON.stringify(favoriteChannels));
+            renderChannels(); // স্ক্রিন রিফ্রেশ
+        }
+
+        // চ্যানেল প্লে করার ফাংশন
+        function playChannel(channel) {
+            playingNowText.innerText = `লোডিং হচ্ছে: [${channel.number}] ${channel.name}...`;
+            
+            player.src({
+                src: channel.link,
+                type: 'application/x-mpegURL'
+            });
+            
+            player.play().then(() => {
+                playingNowText.innerText = `এখন প্লে হচ্ছে: [${channel.number}] ${channel.name}`;
+            }).catch(error => {
+                playingNowText.innerText = `দুঃখিত! [${channel.number}] ${channel.name} চ্যানেলটি এই মুহূর্তে অফলাইন আছে।`;
+            });
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // সার্চ ইনপুটের ইভেন্ট লিসেনার (টাইপ করার সাথে সাথে সার্চ হবে)
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            renderChannels();
+        });
+
+        // গ্রুপ/ক্যাটাগরি বাটনের ইভেন্ট লিসেনার
+        groupButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // একটিভ ক্লাস চেঞ্জ করা
+                groupButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                currentGroup = btn.getAttribute('data-group');
+                renderChannels();
+            });
+        });
+
+        // প্রথমবার পেজ লোড হলে রান হবে
+        renderChannels();
+        
+        if(channels.length > 0) {
+            player.src({
+                src: channels[0].link,
+                type: 'application/x-mpegURL'
+            });
+            playingNowText.innerText = `একটি চ্যানেল সিলেক্ট করুন (১ম চ্যানেল রেডি আছে: ${channels[0].name})`;
+        }
+    </script>
+</body>
+</html>
