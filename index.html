@@ -3,211 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jahangir IPTV Premium - Ready Live TV</title>
+    <title>Advanced IPTV Player</title>
+    <!-- Tailwind CSS for styling -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.10.0/video-js.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.10.0/video.min.js"></script>
+    <!-- Video.js for handling HLS (.m3u8) streams -->
+    <link href="https://vjs.zencdn.net/8.3.0/video-js.css" rel="stylesheet" />
+    <script src="https://vjs.zencdn.net/8.3.0/video.min.js"></script>
 
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #334155; }
-        
-        /* Premium Clean Big Player Style */
-        .video-js { font-family: sans-serif !important; color: #fff !important; width: 100% !important; height: 100% !important; background-color: #000 !important; }
-        .video-js .vjs-big-play-button { background-color: #4f46e5 !important; border-radius: 50% !important; width: 2.3em !important; height: 2.3em !important; line-height: 2.3em !important; margin-top: -1.15em !important; margin-left: -1.15em !important; border: none !important; }
-        .vjs-control-bar { background-color: rgba(15, 23, 42, 0.95) !important; backdrop-filter: blur(10px); }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
     </style>
 </head>
-<body class="bg-[#070a13] text-slate-100 font-sans h-screen flex flex-col overflow-hidden select-none">
+<body class="bg-slate-950 text-slate-100 font-sans h-screen flex flex-col overflow-hidden">
 
-    <header class="bg-[#0f1524] border-b border-slate-800/80 px-6 py-3 flex items-center justify-between shrink-0 shadow-lg z-20">
+    <!-- Top Navbar -->
+    <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between shrink-0">
         <div class="flex items-center gap-3">
-            <i class="fa-solid fa-play text-indigo-500 text-xl animate-pulse"></i>
-            <h1 class="text-lg font-bold tracking-wide text-white">Jahangir <span class="text-indigo-400">IPTV PRO HD</span></h1>
+            <i class="fa-solid fa-tv text-indigo-500 text-2xl"></i>
+            <h1 class="text-xl font-bold tracking-wide text-white">Jahangir <span class="text-indigo-400">IPTV</span></h1>
         </div>
-
         <div class="w-full max-w-md mx-4">
             <div class="relative">
-                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                <input type="text" id="searchBox" placeholder="Type name or channel number..." class="w-full bg-[#070a13] border border-slate-700/80 rounded-full pl-9 pr-4 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 transition-colors">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchBar" placeholder="Search channels by name or number..." class="w-full bg-slate-850 border border-slate-700 rounded-full pl-10 pr-4 py-2 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors">
             </div>
-        </div>
-
-        <div class="hidden md:block text-[11px] bg-indigo-950/60 border border-indigo-900/50 text-indigo-300 px-3 py-1.5 rounded-xl">
-            <i class="fa-solid fa-keyboard mr-1"></i> Press <b class="text-white font-mono">1, 2, 12, 13, 14</b> on Keyboard to Switch
         </div>
     </header>
 
-    <div class="flex flex-1 overflow-hidden relative">
+    <!-- Main Workspace -->
+    <div class="flex flex-1 overflow-hidden">
         
-        <aside class="w-44 lg:w-52 bg-[#0f1524] border-r border-slate-800/60 flex flex-col shrink-0 z-10">
-            <div class="p-3 border-b border-slate-800/40">
-                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Categories</h2>
+        <!-- Sidebar: Groups/Categories -->
+        <aside class="w-60 bg-slate-900 border-r border-slate-800 flex flex-col shrink-0">
+            <div class="p-4 border-b border-slate-800">
+                <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Categories</h2>
             </div>
             <div id="groupList" class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
-                </div>
+                <!-- Groups will be injected here via JavaScript -->
+            </div>
         </aside>
 
-        <div class="w-[28%] min-w-[270px] bg-[#070a13] border-r border-slate-800/60 flex flex-col overflow-hidden p-3 z-10">
-            <div class="flex items-center justify-between mb-3 px-1">
-                <h2 id="currentCategoryTitle" class="text-xs font-bold text-slate-300 uppercase tracking-wider truncate">
-                    <i class="fa-solid fa-layer-group text-indigo-400 mr-1"></i> All Channels
-                </h2>
-                <span id="channelCount" class="text-[10px] bg-indigo-950 text-indigo-300 px-2 py-0.5 rounded-md border border-indigo-900/40 font-mono font-bold">0</span>
-            </div>
-
-            <div id="channelsGrid" class="flex-1 overflow-y-auto custom-scrollbar grid grid-cols-2 gap-2.5 content-start pb-4">
-                </div>
-        </div>
-
-        <main class="flex-1 bg-black flex flex-col relative justify-center items-center overflow-hidden z-10">
+        <!-- Center & Right Workspace -->
+        <main class="flex-1 flex flex-col lg:flex-row overflow-hidden bg-slate-950">
             
-            <div id="channelOverlay" class="absolute top-5 left-5 bg-slate-900/95 backdrop-blur border border-indigo-500/40 px-5 py-2.5 rounded-xl flex items-center gap-3 z-30 opacity-0 pointer-events-none transition-all duration-300 shadow-2xl">
-                <div class="text-2xl font-black font-mono text-indigo-400" id="overlayNumber">00</div>
-                <div class="h-6 w-[1px] bg-slate-800"></div>
-                <div class="text-xs font-bold text-white tracking-wide" id="overlayName">Loading Stream...</div>
-            </div>
-
-            <div id="remoteTypingOverlay" class="absolute bg-indigo-600 border border-indigo-400 text-white font-mono font-black text-4xl px-8 py-4 rounded-2xl z-40 shadow-2xl hidden">
-                <span class="text-[10px] text-indigo-200 block font-sans font-bold tracking-widest uppercase mb-1">REMOTE INPUT</span>
-                CH <span id="remoteLiveNumber" class="text-yellow-300"></span>
-            </div>
-
-            <div class="w-full h-full relative bg-black flex items-center justify-center">
-                <div id="playerPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 p-6 text-center bg-gradient-to-b from-[#0f1524] via-[#070a13] to-black z-10">
-                    <i class="fa-solid fa-circle-play text-4xl text-indigo-500/20 mb-2 animate-pulse"></i>
-                    <p class="text-xs font-bold text-slate-300">Jahangir IPTV Player Active</p>
-                    <p class="text-[10px] text-slate-600 mt-1 max-w-xs">Select any channel from the list, or directly type channel numbers like <span class="text-indigo-400 font-bold font-mono">1, 2, 12, 13, 14</span> on your keyboard.</p>
+            <!-- Left Side: Channels Grid Container -->
+            <div class="flex-1 flex flex-col overflow-hidden p-4">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 id="currentCategoryTitle" class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group text-indigo-400"></i> All Channels
+                    </h2>
+                    <span id="channelCount" class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-full border border-slate-700">0 Channels</span>
                 </div>
                 
-                <video id="iptv-cinema-player" class="video-js vjs-default-skin w-full h-full object-contain" controls preload="auto"></video>
+                <!-- Channels Grid -->
+                <div id="channelsGrid" class="flex-1 overflow-y-auto custom-scrollbar grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3 content-start pb-6">
+                    <!-- Channels will be injected here via JavaScript -->
+                </div>
             </div>
+
+            <!-- Right Side: Big Video Player Box (No text/labels included) -->
+            <section class="w-full lg:w-[55%] xl:w-[60%] bg-black border-t lg:border-t-0 lg:border-l border-slate-800 flex flex-col shrink-0 relative">
+                
+                <!-- Video.js Player Container -->
+                <div class="w-full h-full relative flex items-center justify-center aspect-video lg:aspect-auto">
+                    <!-- Placeholder screen before click -->
+                    <div id="playerPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 p-4 text-center bg-slate-900 z-10 transition-all duration-300">
+                        <i class="fa-solid fa-play-circle text-6xl mb-3 text-indigo-500/40"></i>
+                        <p class="text-sm tracking-wider">Select a channel to start streaming</p>
+                    </div>
+                    
+                    <!-- Core Video Tag -->
+                    <video id="iptv-player" class="video-js vjs-default-skin w-full h-full object-contain" controls preload="auto" data-setup='{}'></video>
+                </div>
+
+            </section>
 
         </main>
     </div>
 
     <script>
-        // --- PRE-LOADED CHANNELS DATABASE (এখানে আপনার সব চ্যানেল এড করা থাকবে) ---
+        // --- Channels Database ---
         const channels = [
-            { 
-                id: 1, 
-                number: "1", 
-                name: "Cartoon Network", 
-                group: "Kids", 
-                logo: "https://i.ibb.co.com/8B0Lpzd/1000021166.png", 
-                url: "https://vodzong.mjunoon.tv:8087/streamtest/cartoon-network-87/playlist.m3u8" 
-            },
-            { 
-                id: 2, 
-                number: "2", 
-                name: "Somoy TV HD", 
-                group: "News", 
-                logo: "https://www.somoynews.tv/themes/somoy/images/logo.png", 
-                url: "https://vodzong.mjunoon.tv:8087/streamtest/cartoon-network-87/playlist.m3u8" // টেস্ট করার জন্য লিংক দেওয়া, আপনার লিংক এখানে বসাবেন
-            },
-            { 
-                id: 12, 
-                number: "12", 
-                name: "Sony Sports 1", 
-                group: "Sports", 
-                logo: "https://upload.wikimedia.org/wikipedia/commons/2/23/Sony_Sports_Network_logo.png", 
-                url: "https://vodzong.mjunoon.tv:8087/streamtest/cartoon-network-87/playlist.m3u8"
-            },
-            { 
-                id: 13, 
-                number: "13", 
-                name: "Pogo TV", 
-                group: "Kids", 
-                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Pogo_tv_logo.svg/1200px-Pogo_tv_logo.svg.png", 
-                url: "https://vodzong.mjunoon.tv:8087/streamtest/cartoon-network-87/playlist.m3u8"
-            },
-            { 
-                id: 14, 
-                number: "14", 
-                name: "Independent TV", 
-                group: "News", 
-                logo: "https://www.itvbd.com/templates/default/images/logo.png", 
-                url: "https://vodzong.mjunoon.tv:8087/streamtest/cartoon-network-87/playlist.m3u8"
-            }
+            { id: 1, number: "101", name: "Somoy TV", group: "News", logo: "https://www.somoynews.tv/themes/somoy/images/logo.png", url: "https://example.com/live/somoy.m3u8" },
+            { id: 2, number: "102", name: "Independent TV", group: "News", logo: "https://upload.wikimedia.org/wikipedia/en/2/2c/Independent_Television_logo.png", url: "https://example.com/live/independent.m3u8" },
+            { id: 3, number: "201", name: "Sony Sports 1", group: "Sports", logo: "https://upload.wikimedia.org/wikipedia/commons/2/23/Sony_Sports_Network_logo.png", url: "https://example.com/live/sonysports1.m3u8" },
+            { id: 4, number: "202", name: "T Sports", group: "Sports", logo: "https://upload.wikimedia.org/wikipedia/en/e/ed/TSports_logo.png", url: "https://example.com/live/tsports.m3u8" },
+            { id: 5, number: "301", name: "Cartoon Network", group: "Kids", logo: "https://upload.wikimedia.org/wikipedia/commons/b/bb/Cartoon_Network_2010_logo.svg", url: "https://example.com/live/cn.m3u8" },
+            { id: 6, number: "401", name: "HBO HD", group: "Movies", logo: "https://upload.wikimedia.org/wikipedia/commons/d/de/HBO_logo.svg", url: "https://example.com/live/hbo.m3u8" }
         ];
 
         let selectedCategory = "All";
-        let searchFilterQuery = "";
+        let searchQuery = "";
         let player;
 
-        // Remote sequential keyboard input configuration
-        let keypressBuffer = "";
-        let keypressTimer = null;
-
         document.addEventListener('DOMContentLoaded', () => {
-            // Setup Video Engine
-            player = videojs('iptv-cinema-player', {
-                html5: { vhs: { overrideNative: true } }
-            });
-
-            // Initial Render
+            player = videojs('iptv-player');
             renderGroups();
-            renderChannelsGrid();
+            renderChannels();
 
-            // Search Bar Input Listener
-            document.getElementById('searchBox').addEventListener('input', (e) => {
-                searchFilterQuery = e.target.value.toLowerCase();
-                renderChannelsGrid();
-            });
-
-            // ⌨️ MULTI-DIGIT ADVANCED KEYBOARD CONTROLLER (1, 2, 12, 13, 14 etc.)
-            document.addEventListener('keydown', (e) => {
-                if (document.activeElement.tagName === 'INPUT') return;
-
-                // Capture digits 0 to 9
-                if (e.key >= '0' && e.key <= '9') {
-                    clearTimeout(keypressTimer);
-                    keypressBuffer += e.key;
-
-                    // Trigger and flash typing box on screen center
-                    const typingBox = document.getElementById('remoteTypingOverlay');
-                    document.getElementById('remoteLiveNumber').innerText = keypressBuffer;
-                    typingBox.classList.remove('hidden');
-
-                    // 1.2 Seconds buffer speed for multi digit entries
-                    keypressTimer = setTimeout(() => {
-                        executeRemoteChannelSwitch(keypressBuffer);
-                        keypressBuffer = ""; // Flush out buffer string
-                        typingBox.classList.add('hidden');
-                    }, 1200);
-                }
+            document.getElementById('searchBar').addEventListener('input', (e) => {
+                searchQuery = e.target.value.toLowerCase();
+                renderChannels();
             });
         });
 
-        // Query typed value inside available data array mapping
-        function executeRemoteChannelSwitch(bufferedNumberString) {
-            const cleanIntString = String(parseInt(bufferedNumberString, 10));
-            const targetedChannel = channels.find(ch => String(ch.number) === cleanIntString);
-
-            if (targetedChannel) {
-                playChannel(targetedChannel.id);
-            } else {
-                alert(`Channel number ${cleanIntString} does not exist in the list!`);
-            }
-        }
-
-        // Render Sidebar Groups
+        // Render Categories
         function renderGroups() {
             const groupList = document.getElementById('groupList');
-            const uniqueGroups = ['All', ...new Set(channels.map(ch => ch.group))];
+            const groups = ['All', ...new Set(channels.map(ch => ch.group))];
             
-            groupList.innerHTML = uniqueGroups.map(grp => {
-                const isActive = selectedCategory === grp;
-                const count = grp === 'All' ? channels.length : channels.filter(c => c.group === grp).length;
+            groupList.innerHTML = groups.map(group => {
+                const isActive = selectedCategory === group;
+                const icon = group === 'All' ? 'fa-list' : group === 'News' ? 'fa-newspaper' : group === 'Sports' ? 'fa-trophy' : group === 'Kids' ? 'fa-child' : 'fa-film';
                 
                 return `
-                    <button onclick="filterCategory('${grp}')" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 text-left ${isActive ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/10' : 'text-slate-400 hover:bg-slate-800/40 hover:text-slate-200'}">
-                        <span class="truncate pr-1">${grp}</span>
-                        <span class="text-[10px] px-1.5 py-0.2 rounded bg-slate-950/40 text-slate-400">${count}</span>
+                    <button onclick="filterCategory('${group}')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 text-left ${isActive ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'}">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid ${icon} w-4 text-center"></i>
+                            <span>${group}</span>
+                        </div>
+                        <span class="text-xs px-1.5 py-0.5 rounded bg-slate-950/40 text-slate-400">${group === 'All' ? channels.length : channels.filter(c => c.group === group).length}</span>
                     </button>
                 `;
             }).join('');
@@ -215,70 +135,56 @@
 
         function filterCategory(category) {
             selectedCategory = category;
-            document.getElementById('currentCategoryTitle').innerHTML = `<i class="fa-solid fa-layer-group text-indigo-400 mr-1"></i> ${category}`;
+            document.getElementById('currentCategoryTitle').innerHTML = `<i class="fa-solid fa-layer-group text-indigo-400"></i> ${category} Channels`;
             renderGroups();
-            renderChannelsGrid();
+            renderChannels();
         }
 
-        // Render Sidebar Box Items List (Your exact grid style)
-        function renderChannelsGrid() {
+        // Render Grid
+        function renderChannels() {
             const grid = document.getElementById('channelsGrid');
             
-            const filtered = channels.filter(ch => {
-                const matchesCategory = selectedCategory === 'All' || ch.group === selectedCategory;
-                const matchesSearch = ch.name.toLowerCase().includes(searchFilterQuery) || ch.number.includes(searchFilterQuery);
+            const filteredChannels = channels.filter(channel => {
+                const matchesCategory = selectedCategory === 'All' || channel.group === selectedCategory;
+                const matchesSearch = channel.name.toLowerCase().includes(searchQuery) || channel.number.includes(searchQuery);
                 return matchesCategory && matchesSearch;
             });
 
-            document.getElementById('channelCount').innerText = filtered.length;
+            document.getElementById('channelCount').innerText = `${filteredChannels.length} Channels`;
 
-            if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-600 text-xs">No channels found</div>`;
+            if(filteredChannels.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-12 text-center text-slate-500"><i class="fa-solid fa-folder-open text-4xl mb-2 block"></i> No channels found</div>`;
                 return;
             }
 
-            grid.innerHTML = filtered.map(ch => {
-                const isCurrentPlay = activeChannelId === ch.id;
-                return `
-                    <div onclick="playChannel(${ch.id})" class="bg-[#0f1524] border ${isCurrentPlay ? 'border-indigo-500 bg-[#141c30]' : 'border-slate-800/80'} hover:border-indigo-500/70 rounded-2xl p-2.5 flex flex-col items-center justify-between text-center cursor-pointer hover:bg-[#131b2e] transition-all duration-150 group relative overflow-hidden aspect-square shadow">
-                        <span class="absolute top-1.5 left-1.5 text-[9px] font-mono font-bold bg-slate-950/80 text-indigo-400 px-1.5 py-0.5 rounded border border-slate-800/40">Ch ${ch.number}</span>
-                        <div class="w-12 h-12 flex items-center justify-center my-auto">
-                            <img src="${ch.logo}" alt="" onerror="this.src='https://placehold.co/80x80/070a13/cbd5e1?text=TV'" class="max-w-full max-h-full object-contain filter drop-shadow group-hover:scale-105 transition-transform">
-                        </div>
-                        <h3 class="w-full text-[10px] font-bold text-slate-300 group-hover:text-indigo-400 transition-colors truncate px-0.5">${ch.name}</h3>
+            grid.innerHTML = filteredChannels.map(channel => `
+                <div onclick="playChannel(${channel.id})" class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex flex-col items-center justify-between text-center cursor-pointer hover:border-indigo-500/50 hover:bg-slate-850 transition-all duration-200 group relative overflow-hidden">
+                    <span class="absolute top-2 left-2 text-[10px] font-mono bg-slate-950 text-indigo-400 px-1.5 py-0.5 rounded border border-slate-800">Ch ${channel.number}</span>
+                    <div class="w-16 h-16 flex items-center justify-center my-3">
+                        <img src="${channel.logo}" alt="${channel.name}" onerror="this.src='https://placehold.co/100x100/1e293b/cbd5e1?text=TV'" class="max-w-full max-h-full object-contain filter drop-shadow group-hover:scale-105 transition-transform">
                     </div>
-                `;
-            }).join('');
+                    <div class="w-full">
+                        <div class="text-xs text-slate-500 font-medium truncate mb-0.5">${channel.group}</div>
+                        <h3 class="text-sm font-bold text-slate-200 group-hover:text-indigo-400 transition-colors truncate">${channel.name}</h3>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        // Action Trigger: Active Stream URL Playback
+        // Stream Handler
         function playChannel(id) {
             const channel = channels.find(c => c.id === id);
-            if (!channel) return;
+            if(!channel) return;
 
-            activeChannelId = id;
+            // Hide Placeholder Screen
             document.getElementById('playerPlaceholder').classList.add('hidden');
             
-            // Stream URL setup inside Video.js core engine
+            // Set stream source
             player.src({
                 src: channel.url,
                 type: 'application/x-mpegURL'
             });
             player.play();
-            renderChannelsGrid();
-
-            // Flash notification banner box over the video layout top edge
-            const overlay = document.getElementById('channelOverlay');
-            document.getElementById('overlayNumber').innerText = channel.number;
-            document.getElementById('overlayName').innerText = channel.name;
-            
-            overlay.classList.remove('opacity-0', 'pointer-events-none');
-            overlay.classList.add('opacity-100');
-            
-            setTimeout(() => {
-                overlay.classList.remove('opacity-100');
-                overlay.classList.add('opacity-0', 'pointer-events-none');
-            }, 2500);
         }
     </script>
 </body>
