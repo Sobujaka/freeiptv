@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jahangir IPTV Premium - Ultimate Layout</title>
+    <title>Jahangir IPTV - Ultimate Big Side Player</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -16,32 +16,31 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #334155; }
         
-        /* Fix for Broken Player Texts & Maximizing Player Size */
+        /* Premium Clean Big Player Style */
         .video-js { font-family: sans-serif !important; color: #fff !important; width: 100% !important; height: 100% !important; background-color: #000 !important; }
-        .video-js .vjs-big-play-button { background-color: #4f46e5 !important; border-radius: 50% !important; width: 2.5em !important; height: 2.5em !important; line-height: 2.5em !important; margin-top: -1.25em !important; margin-left: -1.25em !important; border: none !important; }
-        .vjs-control-bar { background-color: rgba(15, 23, 42, 0.9) !important; backdrop-filter: blur(8px); }
-        .vjs-hidden { display: none !important; }
+        .video-js .vjs-big-play-button { background-color: #4f46e5 !important; border-radius: 50% !important; width: 2.3em !important; height: 2.3em !important; line-height: 2.3em !important; margin-top: -1.15em !important; margin-left: -1.15em !important; border: none !important; }
+        .vjs-control-bar { background-color: rgba(15, 23, 42, 0.95) !important; backdrop-filter: blur(10px); }
     </style>
 </head>
 <body class="bg-[#070a13] text-slate-100 font-sans h-screen flex flex-col overflow-hidden select-none">
 
-    <header class="bg-[#0f1524] border-b border-slate-800/80 px-6 py-3 flex flex-wrap items-center justify-between shrink-0 gap-4 z-20 shadow-lg">
+    <header class="bg-[#0f1524] border-b border-slate-800/80 px-6 py-3 flex items-center justify-between shrink-0 shadow-lg z-20">
         <div class="flex items-center gap-3">
-            <i class="fa-solid fa-tv text-indigo-500 text-xl"></i>
-            <h1 class="text-lg font-bold tracking-wide text-white">Jahangir <span class="text-indigo-400">IPTV Pro</span></h1>
+            <i class="fa-solid fa-play text-indigo-500 text-xl animate-pulse"></i>
+            <h1 class="text-lg font-bold tracking-wide text-white">Jahangir <span class="text-indigo-400">IPTV Cinema</span></h1>
         </div>
 
-        <div class="flex items-center gap-3 flex-wrap">
+        <div class="flex items-center gap-3">
             <label class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-xl cursor-pointer transition-all flex items-center gap-2 shadow-md">
                 <i class="fa-solid fa-file-import"></i> Upload M3U List
-                <input type="file" id="m3uFileUploader" accept=".m3u,.m3u8" class="hidden">
+                <input type="file" id="m3uUploader" accept=".m3u,.m3u8" class="hidden">
             </label>
             
-            <button onclick="deleteActiveDeadChannel()" class="bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white border border-rose-500/30 text-xs font-bold px-4 py-2 rounded-xl transition-all flex items-center gap-2">
+            <button onclick="deleteCurrentDeadChannel()" class="bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white border border-rose-500/30 text-xs font-bold px-4 py-2 rounded-xl transition-all flex items-center gap-2">
                 <i class="fa-solid fa-trash-can"></i> Remove Dead Link
             </button>
 
-            <button onclick="downloadCleanM3UFile()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all flex items-center gap-2 shadow-md">
+            <button onclick="downloadCleanM3U()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all flex items-center gap-2 shadow-md">
                 <i class="fa-solid fa-cloud-arrow-down"></i> Download Clean M3U
             </button>
         </div>
@@ -49,50 +48,145 @@
 
     <div class="flex flex-1 overflow-hidden relative">
         
-        <aside class="w-48 lg:w-56 bg-[#0f1524] border-r border-slate-800/60 flex flex-col shrink-0 z-10">
+        <aside class="w-40 lg:w-48 bg-[#0f1524] border-r border-slate-800/60 flex flex-col shrink-0 z-10">
             <div class="p-3 border-b border-slate-800/40">
-                <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Categories</h2>
+                <h2 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Categories</h2>
             </div>
-            <div id="groupContainer" class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
+            <div id="groupList" class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
                 </div>
         </aside>
 
-        <div class="w-[32%] min-w-[320px] bg-[#070a13] border-r border-slate-800/60 flex flex-col overflow-hidden p-3 z-10">
+        <div class="w-[28%] min-w-[260px] bg-[#070a13] border-r border-slate-800/60 flex flex-col overflow-hidden p-3 z-10">
             <div class="flex items-center justify-between mb-3 px-1">
-                <h2 id="categoryViewTitle" class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                    <i class="fa-solid fa-layer-group text-indigo-400"></i> All Channels
+                <h2 id="currentCategoryTitle" class="text-xs font-bold text-slate-300 uppercase tracking-wider truncate">
+                    <i class="fa-solid fa-layer-group text-indigo-400 mr-1"></i> All Channels
                 </h2>
-                <span id="channelBadgeCounter" class="text-[10px] bg-indigo-950 text-indigo-300 px-2 py-0.5 rounded-md border border-indigo-900/40 font-mono font-bold">0</span>
+                <span id="channelCount" class="text-[10px] bg-indigo-950 text-indigo-300 px-2 py-0.5 rounded-md border border-indigo-900/40 font-mono font-bold">0</span>
             </div>
 
-            <div id="channelsGridArea" class="flex-1 overflow-y-auto custom-scrollbar grid grid-cols-2 gap-2.5 content-start pb-4">
-                <div class="col-span-full py-12 text-center text-slate-600 text-xs px-2">
-                    <i class="fa-solid fa-arrow-up text-2xl mb-2 text-indigo-500/20 block animate-bounce"></i>
-                    Upload your .m3u or .m3u8 playlist file to view channels here.
+            <div id="channelsGrid" class="flex-1 overflow-y-auto custom-scrollbar grid grid-cols-2 gap-2 content-start pb-4">
+                <div class="col-span-full py-12 text-center text-slate-600 text-xs">
+                    <i class="fa-solid fa-file-invoice text-2xl mb-2 text-slate-800 block animate-bounce"></i>
+                    Upload M3U list to start.
                 </div>
             </div>
         </div>
 
-        <main class="flex-1 bg-black flex flex-col relative justify-center items-center overflow-hidden">
+        <main class="flex-1 bg-black flex flex-col relative justify-center items-center overflow-hidden z-10">
             
-            <div id="channelIndicatorAlert" class="absolute top-5 left-5 bg-slate-900/95 backdrop-blur border border-indigo-500/40 px-5 py-2.5 rounded-xl flex items-center gap-3 z-30 opacity-0 pointer-events-none transition-all duration-300 shadow-2xl">
-                <div class="text-xl font-black font-mono text-indigo-400" id="alertChNum">00</div>
+            <div id="channelOverlay" class="absolute top-5 left-5 bg-slate-900/95 backdrop-blur border border-indigo-500/40 px-5 py-2.5 rounded-xl flex items-center gap-3 z-30 opacity-0 pointer-events-none transition-all duration-300 shadow-2xl">
+                <div class="text-2xl font-black font-mono text-indigo-400" id="overlayNumber">00</div>
                 <div class="h-6 w-[1px] bg-slate-800"></div>
-                <div class="text-xs font-bold text-white tracking-wide" id="alertChName">Loading Stream...</div>
+                <div class="text-xs font-bold text-white tracking-wide" id="overlayName">Loading Stream...</div>
             </div>
 
-            <div id="remoteKeystrokeOverlay" class="absolute bg-indigo-600 border border-indigo-400 text-white font-mono font-black text-4xl px-8 py-4 rounded-2xl z-40 shadow-2xl hidden">
+            <div id="remoteTypingOverlay" class="absolute bg-indigo-600 border border-indigo-400 text-white font-mono font-black text-4xl px-8 py-4 rounded-2xl z-40 shadow-2xl hidden">
                 <span class="text-[10px] text-indigo-200 block font-sans font-bold tracking-widest uppercase mb-1">REMOTE INPUT</span>
-                CH <span id="remoteLiveTypedNumber" class="text-yellow-300"></span>
+                CH <span id="remoteLiveNumber" class="text-yellow-300"></span>
             </div>
 
             <div class="w-full h-full relative bg-black flex items-center justify-center">
-                <div id="videoScreenPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 p-6 text-center bg-gradient-to-b from-[#0f1524] via-[#070a13] to-black z-10">
-                    <div class="w-14 h-14 bg-indigo-600/10 border border-indigo-500/20 rounded-full flex items-center justify-center mb-3 shadow-xl">
-                        <i class="fa-solid fa-circle-play text-xl text-indigo-400 animate-pulse"></i>
-                    </div>
-                    <p class="text-xs font-bold text-slate-300">Cinema Display Frame Active</p>
-                    <p class="text-[11px] text-slate-600 mt-1 max-w-xs">Directly type multi-digit channel sequence like <span class="text-indigo-400 font-bold font-mono">12</span>, <span class="text-indigo-400 font-bold font-mono">13</span>, or <span class="text-indigo-400 font-bold font-mono">14</span> on your keyboard.</p>
+                <div id="playerPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 p-6 text-center bg-gradient-to-b from-[#0f1524] via-[#070a13] to-black z-10">
+                    <i class="fa-solid fa-circle-play text-3xl text-indigo-500/30 mb-2 animate-pulse"></i>
+                    <p class="text-xs font-bold text-slate-300">Big Cinema Display Player Ready</p>
+                    <p class="text-[10px] text-slate-600 mt-1 max-w-xs">Select any channel from the left panel, or type numbers like <span class="text-indigo-400 font-bold font-mono">12, 13, 14</span> sequentially on your keyboard.</p>
                 </div>
                 
-                <video id="jahangir-iptv-engine" class="video-js vjs-default-skin w-full h-
+                <video id="iptv-cinema-player" class="video-js vjs-default-skin w-full h-full object-contain" controls preload="auto"></video>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        let channels = [];
+        let selectedCategory = "All";
+        let activeChannelId = null;
+        let player;
+
+        // Remote sequential keyboard input configuration (12, 13, 14 fix)
+        let keypressBuffer = "";
+        let keypressTimer = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Setup Video Engine
+            player = videojs('iptv-cinema-player', {
+                html5: { vhs: { overrideNative: true } }
+            });
+
+            document.getElementById('m3uUploader').addEventListener('change', handleM3UUpload);
+
+            // ⌨️ MULTI-DIGIT ADVANCED KEYBOARD CONTROLLER (1, 2, 12, 13, 14 etc.)
+            document.addEventListener('keydown', (e) => {
+                if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT') return;
+
+                // Capture digits 0 to 9
+                if (e.key >= '0' && e.key <= '9') {
+                    clearTimeout(keypressTimer);
+                    keypressBuffer += e.key;
+
+                    // Trigger and flash typing box on screen center
+                    const typingBox = document.getElementById('remoteTypingOverlay');
+                    document.getElementById('remoteLiveNumber').innerText = keypressBuffer;
+                    typingBox.classList.remove('hidden');
+
+                    // 1.2 Seconds buffer speed for multi digit entries
+                    keypressTimer = setTimeout(() => {
+                        executeRemoteChannelSwitch(keypressBuffer);
+                        keypressBuffer = ""; // Flush out buffer string
+                        typingBox.classList.add('hidden');
+                    }, 1200);
+                }
+            });
+        });
+
+        // Query typed value inside available data array mapping
+        function executeRemoteChannelSwitch(bufferedNumberString) {
+            const cleanIntString = String(parseInt(bufferedNumberString, 10));
+            const targetedChannel = channels.find(ch => String(ch.number) === cleanIntString);
+
+            if (targetedChannel) {
+                playChannel(targetedChannel.id);
+            } else {
+                alert(`Channel number ${cleanIntString} does not exist in your playlist!`);
+            }
+        }
+
+        // --- Core M3U Playlist Parser Engine ---
+        function handleM3UUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const lines = e.target.result.split('\n');
+                channels = [];
+                let currentItem = null;
+                let counter = 1;
+
+                for (let i = 0; i < lines.length; i++) {
+                    let line = lines[i].trim();
+
+                    if (line.startsWith('#EXTINF:')) {
+                        currentItem = {};
+                        currentItem.id = counter;
+                        currentItem.number = String(counter); // Auto sequence numerical layout ids
+                        
+                        const logoMatch = line.match(/tvg-logo="([^"]+)"/);
+                        const groupMatch = line.match(/group-title="([^"]+)"/);
+                        
+                        currentItem.logo = logoMatch ? logoMatch[1] : "";
+                        currentItem.group = groupMatch ? groupMatch[1] : "Live Streams";
+                        
+                        const commaIdx = line.lastIndexOf(',');
+                        currentItem.name = commaIdx !== -1 ? line.substring(commaIdx + 1).trim() : "Live TV Stream";
+                        
+                    } else if (line.startsWith('http') && currentItem) {
+                        currentItem.url = line;
+                        channels.push(currentItem);
+                        currentItem = null;
+                        counter++;
+                    }
+                }
+
+                selectedCategory =
