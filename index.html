@@ -46,17 +46,17 @@
             font-weight: 600;
         }
 
-        /* App Container (সবসময় পাশাপাশি রাখার মূল ট্রিক) */
+        /* App Container */
         .app-container {
             display: flex;
-            flex-direction: row; /* সবসময় পাশাপাশি থাকবে */
+            flex-direction: row; /* পাশাপাশি থাকবে সবসময় */
             flex: 1;
             height: calc(100vh - 50px);
             overflow: hidden;
             width: 100%;
         }
 
-        /* Left Side: Video Player (৭০% জায়গা নেবে) */
+        /* Left Side: Video Player (৭০% জায়গা) */
         .player-side {
             flex: 7; 
             background-color: #000;
@@ -90,14 +90,14 @@
             color: var(--text-color);
         }
 
-        /* Right Side: Sidebar (৩০% জায়গা নেবে) */
+        /* Right Side: Sidebar (৩০% জায়গা) */
         .sidebar-side {
             flex: 3; 
             background-color: var(--sidebar-bg);
             border-left: 1px solid #374151;
             display: flex;
             flex-direction: column;
-            min-width: 280px; /* সর্বনিম্ন সাইজ নিশ্চিত করার জন্য */
+            min-width: 280px;
             height: 100%;
         }
 
@@ -169,7 +169,7 @@
         .ch-num {
             font-size: 11px;
             color: var(--text-muted);
-            min-width: 20px;
+            min-width: 25px;
             font-weight: bold;
         }
 
@@ -223,7 +223,7 @@
         <div class="sidebar-side">
             
             <div class="search-container">
-                <input type="text" id="searchBar" placeholder="চ্যানেল খুঁজুন...">
+                <input type="text" id="searchBar" placeholder="নাম অথবা নম্বর দিয়ে খুঁজুন...">
                 <select id="groupFilter">
                     <option value="all">সব ক্যাটাগরি</option>
                     <option value="Bangla">Bangla TV</option>
@@ -298,7 +298,7 @@
                 row.onclick = () => playChannel(channel);
 
                 row.innerHTML = `
-                    <div class="ch-num">${channel.id}</div>
+                    <div class="ch-num">#${channel.id}</div>
                     <img class="ch-logo" src="${channel.logo}" alt="" onerror="this.src='https://placehold.co/70x70/1e293b/fff?text=TV'">
                     <div class="ch-details">
                         <div class="ch-name">${channel.name}</div>
@@ -318,17 +318,24 @@
             player.src({ src: channel.url, type: 'application/x-mpegURL' });
             player.play().catch(() => console.log("Playback error or link dead."));
 
-            currentPlayingText.innerText = `এখন চলছে: ${channel.name}`;
+            currentPlayingText.innerText = `এখন চলছে: #${channel.id} - ${channel.name}`;
         }
 
+        // নাম এবং নম্বরের সমন্বিত সার্চ লজিক (Updated)
         function filterChannels() {
-            const query = searchBar.value.toLowerCase();
+            const query = searchBar.value.toLowerCase().trim();
             const selectedGroup = groupFilter.value;
 
             const filtered = channels.filter(ch => {
-                const matchSearch = ch.name.toLowerCase().includes(query);
-                const matchGroup = selectedGroup === 'all' || ch.group === selectedGroup;
-                return matchSearch && matchGroup;
+                // নাম ম্যাচ করার কন্ডিশন
+                const matchName = ch.name.toLowerCase().includes(query);
+                // আইডি বা নম্বর ম্যাচ করার কন্ডিশন
+                const matchNumber = ch.id.toString() === query; 
+                
+                const matchesSearch = matchName || matchNumber;
+                const matchesGroup = selectedGroup === 'all' || ch.group === selectedGroup;
+                
+                return matchesSearch && matchesGroup;
             });
             renderChannels(filtered);
         }
