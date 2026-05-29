@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live IPTV Player Pro</title>
+    <title>Jahangir IPTV Player Pro</title>
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
     <style>
         :root {
@@ -46,17 +46,17 @@
             font-weight: 600;
         }
 
-        /* App Container */
+        /* App Container (Always Side-by-Side) */
         .app-container {
             display: flex;
-            flex-direction: row; /* পাশাপাশি থাকবে সবসময় */
+            flex-direction: row; 
             flex: 1;
             height: calc(100vh - 50px);
             overflow: hidden;
             width: 100%;
         }
 
-        /* Left Side: Video Player (৭০% জায়গা) */
+        /* Left Side: Video Player (70%) */
         .player-side {
             flex: 7; 
             background-color: #000;
@@ -75,6 +75,7 @@
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             border-radius: 8px;
             overflow: hidden;
+            background: #000;
         }
 
         .video-js {
@@ -90,7 +91,7 @@
             color: var(--text-color);
         }
 
-        /* Right Side: Sidebar (৩০% জায়গা) */
+        /* Right Side: Sidebar (30%) */
         .sidebar-side {
             flex: 3; 
             background-color: var(--sidebar-bg);
@@ -101,7 +102,7 @@
             height: 100%;
         }
 
-        /* Search area inside sidebar */
+        /* Search & Filter Area */
         .search-container {
             padding: 12px;
             border-bottom: 1px solid #374151;
@@ -217,15 +218,15 @@
                     <p class="vjs-no-js">To view this video please enable JavaScript</p>
                 </video>
             </div>
-            <div class="current-title" id="currentPlaying">লোডিং...</div>
+            <div class="current-title" id="currentPlaying">Loading...</div>
         </div>
 
         <div class="sidebar-side">
             
             <div class="search-container">
-                <input type="text" id="searchBar" placeholder="নাম অথবা নম্বর দিয়ে খুঁজুন...">
+                <input type="text" id="searchBar" placeholder="Name ba Number diye khujun...">
                 <select id="groupFilter">
-                    <option value="all">সব ক্যাটাগরি</option>
+                    <option value="all">Shob Category</option>
                     <option value="Bangla">Bangla TV</option>
                     <option value="Movies">Movies</option>
                     <option value="Kids">Kids</option>
@@ -243,6 +244,7 @@
     <script src="https://vjs.zencdn.net/8.10.0/video.js"></script>
 
     <script>
+        // Channel Database
         const channels = [
             { id: 1, name: "BTV", logo: "https://placehold.co/100x100/1e293b/fff?text=BTV", url: "https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/index.m3u8", group: "Bangla" },
             { id: 2, name: "Jamuna TV", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUGV6AowX_8QpJuAchdiiAZzAFJYZGYhBzVQ&s", url: "https://owrcovcrpy.gpcdn.net/bpk-tv/1701/output/index.m3u8", group: "Bangla" },
@@ -274,7 +276,22 @@
         ];
 
         let currentActiveId = null;
-        const player = videojs('iptv-player', { fluid: true, controls: true });
+
+        // Kapa/Stuttering bondho korar jonne advanced engine config (VHS optimized)
+        const player = videojs('iptv-player', {
+            fluid: true,
+            controls: true,
+            preload: 'auto',
+            html5: {
+                vhs: {
+                    overrideNative: true,
+                    maxBufferLength: 30,       // 30 seconds buffer loading rakhbe 
+                    liveSyncDurationCount: 4,  // Live latency minimize korbe na kapiye
+                    smoothQualityChange: true, // Speed dropped hole quality adjust korbe, lag hobe na
+                    enableLowInitialPlaylist: true
+                }
+            }
+        });
 
         const channelListContainer = document.getElementById('channelListContainer');
         const searchBar = document.getElementById('searchBar');
@@ -287,7 +304,7 @@
             totalChSpan.innerText = list.length;
 
             if(list.length === 0) {
-                channelListContainer.innerHTML = `<p style="text-align:center; padding: 20px; color:var(--text-muted); font-size:13px;">কোনো চ্যানেল পাওয়া যায়নি!</p>`;
+                channelListContainer.innerHTML = `<p style="text-align:center; padding: 20px; color:var(--text-muted); font-size:13px;">No channels found!</p>`;
                 return;
             }
 
@@ -315,21 +332,20 @@
             const activeRow = document.getElementById(`ch-${channel.id}`);
             if(activeRow) activeRow.classList.add('active');
 
+            // Source processing safely for smoother streaming
             player.src({ src: channel.url, type: 'application/x-mpegURL' });
-            player.play().catch(() => console.log("Playback error or link dead."));
+            player.play().catch(() => console.log("Buffering or link issue handled."));
 
-            currentPlayingText.innerText = `এখন চলছে: #${channel.id} - ${channel.name}`;
+            currentPlayingText.innerText = `Ekhon Cholche: #${channel.id} - ${channel.name}`;
         }
 
-        // নাম এবং নম্বরের সমন্বিত সার্চ লজিক (Updated)
+        // Combination search for Name and Number
         function filterChannels() {
             const query = searchBar.value.toLowerCase().trim();
             const selectedGroup = groupFilter.value;
 
             const filtered = channels.filter(ch => {
-                // নাম ম্যাচ করার কন্ডিশন
                 const matchName = ch.name.toLowerCase().includes(query);
-                // আইডি বা নম্বর ম্যাচ করার কন্ডিশন
                 const matchNumber = ch.id.toString() === query; 
                 
                 const matchesSearch = matchName || matchNumber;
@@ -343,7 +359,7 @@
         searchBar.addEventListener('input', filterChannels);
         groupFilter.addEventListener('change', filterChannels);
 
-        // Initial Start
+        // Initial running
         renderChannels(channels);
         if(channels.length > 0) playChannel(channels[0]);
     </script>
