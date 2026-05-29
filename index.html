@@ -46,7 +46,7 @@
             font-weight: 600;
         }
 
-        /* App Container (Always Side-by-Side) */
+        /* App Container (Side-by-Side Always) */
         .app-container {
             display: flex;
             flex-direction: row; 
@@ -102,7 +102,7 @@
             height: 100%;
         }
 
-        /* Search & Filter Area */
+        /* Search area */
         .search-container {
             padding: 12px;
             border-bottom: 1px solid #374151;
@@ -135,7 +135,6 @@
             padding: 8px;
         }
 
-        /* Custom Scrollbar */
         .channel-list::-webkit-scrollbar {
             width: 5px;
         }
@@ -153,8 +152,10 @@
             margin-bottom: 6px;
             border-radius: 6px;
             cursor: pointer;
-            transition: all 0.2s ease;
             border: 1px solid transparent;
+            /* Logo shaking processing */
+            transform: translateZ(0);
+            backface-visibility: hidden;
         }
 
         .channel-row:hover {
@@ -174,13 +175,31 @@
             font-weight: bold;
         }
 
-        .ch-logo {
+        /* LOGO KAPA BONDHO KORAR MAIN CSS */
+        .ch-logo-wrapper {
             width: 40px;
             height: 40px;
-            object-fit: contain;
+            min-width: 40px; /* Layout layout stable rakhe */
+            min-height: 40px;
+            margin-right: 10px;
             background-color: #111827;
             border-radius: 4px;
-            margin-right: 10px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ch-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            /* Shaking animation fix */
+            image-rendering: -webkit-optimize-contrast;
+            backface-visibility: hidden;
+            transform: translate3d(0, 0, 0);
+            will-change: transform;
         }
 
         .ch-details {
@@ -246,6 +265,7 @@
     <script>
         // Channel Database
         const channels = [
+            { id: 1, name: "BTV", logo: "https://placehold.co/100x100/1e293b/fff?text=BTV", url: "https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/index.m3u8", group: "Bangla" },
             { id: 2, name: "Jamuna TV", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUGV6AowX_8QpJuAchdiiAZzAFJYZGYhBzVQ&s", url: "https://owrcovcrpy.gpcdn.net/bpk-tv/1701/output/index.m3u8", group: "Bangla" },
             { id: 3, name: "Channel 24", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRztkZpAI3G-n4HsjZv2hkqQdcy1nRaGHlErA&s", url: "https://owrcovcrpy.gpcdn.net/bpk-tv/1703/output/index.m3u8", group: "Bangla" },
             { id: 4, name: "Maasranga TV", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIPhCXYx8nmlx5myoXQGQQnxmn6Vol1z_gx9zDIH3A-GeyGbfvoq_--SE&s=10", url: "http://mtv.sunplex.live/MAASRANGA-TV/index.m3u8", group: "Bangla" },
@@ -276,7 +296,7 @@
 
         let currentActiveId = null;
 
-        // Kapa/Stuttering bondho korar jonne advanced engine config (VHS optimized)
+        // Video buffer configuration for zero lag
         const player = videojs('iptv-player', {
             fluid: true,
             controls: true,
@@ -284,9 +304,9 @@
             html5: {
                 vhs: {
                     overrideNative: true,
-                    maxBufferLength: 30,       // 30 seconds buffer loading rakhbe 
-                    liveSyncDurationCount: 4,  // Live latency minimize korbe na kapiye
-                    smoothQualityChange: true, // Speed dropped hole quality adjust korbe, lag hobe na
+                    maxBufferLength: 30,       
+                    liveSyncDurationCount: 4,  
+                    smoothQualityChange: true, 
                     enableLowInitialPlaylist: true
                 }
             }
@@ -313,9 +333,12 @@
                 row.id = `ch-${channel.id}`;
                 row.onclick = () => playChannel(channel);
 
+                // Added dedicated logo wrapper box to stop image vibration
                 row.innerHTML = `
                     <div class="ch-num">#${channel.id}</div>
-                    <img class="ch-logo" src="${channel.logo}" alt="" onerror="this.src='https://placehold.co/70x70/1e293b/fff?text=TV'">
+                    <div class="ch-logo-wrapper">
+                        <img class="ch-logo" src="${channel.logo}" alt="" onerror="this.src='https://placehold.co/70x70/1e293b/fff?text=TV'">
+                    </div>
                     <div class="ch-details">
                         <div class="ch-name">${channel.name}</div>
                         <div class="ch-group">${channel.group}</div>
@@ -331,14 +354,12 @@
             const activeRow = document.getElementById(`ch-${channel.id}`);
             if(activeRow) activeRow.classList.add('active');
 
-            // Source processing safely for smoother streaming
             player.src({ src: channel.url, type: 'application/x-mpegURL' });
-            player.play().catch(() => console.log("Buffering or link issue handled."));
+            player.play().catch(() => console.log("Buffering..."));
 
             currentPlayingText.innerText = `Ekhon Cholche: #${channel.id} - ${channel.name}`;
         }
 
-        // Combination search for Name and Number
         function filterChannels() {
             const query = searchBar.value.toLowerCase().trim();
             const selectedGroup = groupFilter.value;
@@ -358,7 +379,7 @@
         searchBar.addEventListener('input', filterChannels);
         groupFilter.addEventListener('change', filterChannels);
 
-        // Initial running
+        // Initial setup
         renderChannels(channels);
         if(channels.length > 0) playChannel(channels[0]);
     </script>
