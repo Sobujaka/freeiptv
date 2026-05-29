@@ -3,182 +3,250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jahangir IPTV Player</title>
+    <title>Live IPTV Player Pro</title>
     <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --accent-color: #3b82f6;
-            --text-color: #f8fafc;
+            --bg-color: #0b0f19;
+            --sidebar-bg: #111827;
+            --card-bg: #1f2937;
+            --accent-color: #2563eb;
+            --text-color: #f3f4f6;
+            --text-muted: #9ca3af;
         }
 
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-        }
-
-        header {
-            background-color: var(--card-bg);
-            padding: 15px 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            overflow: hidden;
         }
 
-        @media(min-width: 768px) {
-            .header-container {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-        }
-
-        h1 {
-            margin: 0;
-            font-size: 24px;
-            color: var(--accent-color);
-        }
-
-        .controls {
+        /* Top Header */
+        header {
+            background-color: var(--sidebar-bg);
+            padding: 12px 20px;
+            border-bottom: 1px solid #374151;
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            height: 50px;
         }
 
-        input, select {
-            padding: 10px 15px;
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+            color: #60a5fa;
+            font-weight: 600;
+        }
+
+        /* Main Split Screen Layout */
+        .app-container {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 74px);
+            overflow: hidden;
+        }
+
+        /* Left Side: Video Player */
+        .player-side {
+            flex: 7; /* Takes 70% width */
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .video-wrapper {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            aspect-ratio: 16 / 9;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             border-radius: 8px;
-            border: 1px solid #475569;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-size: 14px;
-            outline: none;
-        }
-
-        input:focus, select:focus {
-            border-color: var(--accent-color);
-        }
-
-        input {
-            min-width: 200px;
-        }
-
-        /* Player Section */
-        .player-container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 0 10px;
+            overflow: hidden;
         }
 
         .video-js {
             width: 100%;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-            aspect-ratio: 16 / 9;
+            height: 100%;
         }
 
-        .current-playing {
+        .current-title {
+            margin-top: 15px;
             text-align: center;
-            margin-top: 10px;
             font-size: 18px;
-            font-weight: bold;
-            color: #94a3b8;
+            font-weight: 500;
+            color: var(--text-color);
         }
 
-        /* Grid Layout */
-        .main-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+        /* Right Side: Sidebar (Search + Filter + Channel List) */
+        .sidebar-side {
+            flex: 3; /* Takes 30% width */
+            background-color: var(--sidebar-bg);
+            border-left: 1px solid #374151;
+            display: flex;
+            flex-direction: column;
+            min-width: 320px;
         }
 
-        .channel-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-        }
-
-        .channel-card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
+        /* Search area inside sidebar */
+        .search-container {
             padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            position: relative;
-            transition: transform 0.2s, box-shadow 0.2s;
-            border: 2px solid transparent;
+            border-bottom: 1px solid #374151;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background-color: rgba(0, 0, 0, 0.2);
         }
 
-        .channel-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+        .search-container input, .search-container select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #4b5563;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 14px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .search-container input:focus, .search-container select:focus {
             border-color: var(--accent-color);
         }
 
-        .channel-number {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            background-color: rgba(0, 0, 0, 0.6);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 11px;
-            color: #cbd5e1;
+        /* Scrollable Channel List */
+        .channel-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
         }
 
-        .channel-logo {
-            width: 70px;
-            height: 70px;
-            object-fit: contain;
-            margin: 10px auto;
-            background-color: #0f172a;
-            border-radius: 8px;
+        /* Custom Scrollbar for channel list */
+        .channel-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .channel-list::-webkit-scrollbar-thumb {
+            background-color: #4b5563;
+            border-radius: 4px;
+        }
+
+        /* Vertical Channel Row/Card */
+        .channel-row {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            color: #64748b;
+            background-color: var(--card-bg);
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            position: relative;
         }
 
-        .channel-name {
+        .channel-row:hover {
+            background-color: #374151;
+            border-color: var(--accent-color);
+        }
+
+        .channel-row.active {
+            background-color: rgba(37, 99, 235, 0.2);
+            border-color: var(--accent-color);
+        }
+
+        .ch-num {
+            font-size: 11px;
+            color: var(--text-muted);
+            min-width: 25px;
+            font-weight: bold;
+        }
+
+        .ch-logo {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+            background-color: #111827;
+            border-radius: 6px;
+            margin-right: 12px;
+            padding: 2px;
+        }
+
+        .ch-details {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .ch-name {
             font-size: 14px;
             font-weight: 600;
-            margin-top: 8px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        .channel-group {
+        .ch-group {
             font-size: 11px;
-            color: #64748b;
-            text-transform: uppercase;
-            margin-top: 4px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* Responsive Layout for Mobile Screens */
+        @media (max-width: 900px) {
+            body {
+                overflow: auto;
+            }
+            .app-container {
+                flex-direction: column;
+                height: auto;
+                overflow: visible;
+            }
+            .player-side {
+                flex: none;
+                width: 100%;
+                padding: 10px;
+            }
+            .sidebar-side {
+                flex: none;
+                width: 100%;
+                height: 500px;
+                border-left: none;
+                border-top: 1px solid #374151;
+            }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="header-container">
-            <h1>Live IPTV Player</h1>
-            <div class="controls">
-                <input type="text" id="searchBar" placeholder="চ্যানেল খুঁজুন...">
-                
+        <h1>Live IPTV Stream</h1>
+        <div style="font-size: 12px; color: var(--text-muted);">Total Channels: <span id="totalCh">0</span></div>
+    </header>
+
+    <div class="app-container">
+        
+        <div class="player-side">
+            <div class="video-wrapper">
+                <video id="iptv-player" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto">
+                    <p class="vjs-no-js">To view this video please enable JavaScript</p>
+                </video>
+            </div>
+            <div class="current-title" id="currentPlaying">লোডিং...</div>
+        </div>
+
+        <div class="sidebar-side">
+            
+            <div class="search-container">
+                <input type="text" id="searchBar" placeholder="চ্যানেলের নাম লিখুন...">
                 <select id="groupFilter">
                     <option value="all">সব ক্যাটাগরি</option>
                     <option value="Bangla">Bangla TV</option>
@@ -187,25 +255,18 @@
                     <option value="Music">Music</option>
                 </select>
             </div>
+
+            <div class="channel-list" id="channelListContainer">
+                </div>
+
         </div>
-    </header>
 
-    <div class="player-container">
-        <video id="iptv-player" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto">
-            <p class="vjs-no-js">ভিডিও দেখতে ব্রাউজারে জাভাস্ক্রিপ্ট সচল করুন।</p>
-        </video>
-        <div class="current-playing" id="currentPlaying">এখন চলছে: BTV</div>
     </div>
-
-    <main class="main-container">
-        <div class="channel-grid" id="channelGrid">
-            </div>
-    </main>
 
     <script src="https://vjs.zencdn.net/8.10.0/video.js"></script>
 
     <script>
-        // আপনার দেওয়া M3U ফাইলের ডাটাবেজ (লোগো, ক্যাটাগরি ও নাম্বার সহ) 
+        // M3U ডেটাবেজ
         const channels = [
             { id: 1, name: "BTV", logo: "https://placehold.co/100x100/1e293b/fff?text=BTV", url: "https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/index.m3u8", group: "Bangla" },
             { id: 2, name: "Jamuna TV", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUGV6AowX_8QpJuAchdiiAZzAFJYZGYhBzVQ&s", url: "https://owrcovcrpy.gpcdn.net/bpk-tv/1701/output/index.m3u8", group: "Bangla" },
@@ -236,78 +297,95 @@
             { id: 27, name: "Music India", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVv4W8vUZYWP-CbojHbEgJzST2qclgnq6V06LV6BVvALbQiRlJUDb1PLoL&s=10", url: "https://cdn-2.pishow.tv/live/226/master.m3u8", group: "Music" }
         ];
 
-        // Initialize Video.js Player
+        let currentActiveId = null;
+
+        // Initialize Video.js
         const player = videojs('iptv-player', {
             fluid: true,
-            playbackRates: [0.5, 1, 1.5, 2]
+            autoplay: false,
+            controls: true
         });
 
         // DOM Elements
-        const channelGrid = document.getElementById('channelGrid');
+        const channelListContainer = document.getElementById('channelListContainer');
         const searchBar = document.getElementById('searchBar');
         const groupFilter = document.getElementById('groupFilter');
         const currentPlayingText = document.getElementById('currentPlaying');
+        const totalChSpan = document.getElementById('totalCh');
 
-        // Render Channel Grid Function 
-        function displayChannels(channelList) {
-            channelGrid.innerHTML = "";
-            if(channelList.length === 0) {
-                channelGrid.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color:#64748b;">কোনো চ্যানেল পাওয়া যায়নি!</p>`;
+        // Render Sidebar Channels
+        function renderChannels(list) {
+            channelListContainer.innerHTML = "";
+            totalChSpan.innerText = list.length;
+
+            if(list.length === 0) {
+                channelListContainer.innerHTML = `<p style="text-align:center; padding: 20px; color:var(--text-muted);">কোনো চ্যানেল মেলেনি!</p>`;
                 return;
             }
 
-            channelList.forEach(channel => {
-                const card = document.createElement('div');
-                card.className = 'channel-card';
-                card.onclick = () => playChannel(channel);
+            list.forEach(channel => {
+                const row = document.createElement('div');
+                row.className = `channel-row ${channel.id === currentActiveId ? 'active' : ''}`;
+                row.id = `ch-${channel.id}`;
+                
+                row.onclick = () => playChannel(channel);
 
-                // Handling broken links or placeholder logos
-                const logoSrc = channel.logo ? channel.logo : "https://via.placeholder.com/70x70?text=No+Logo";
-
-                card.innerHTML = `
-                    <div class="channel-number">#${channel.id}</div>
-                    <img class="channel-logo" src="${logoSrc}" alt="${channel.name}" onerror="this.src='https://placehold.co/70x70/1e293b/fff?text=TV'">
-                    <div class="channel-name">${channel.name}</div>
-                    <div class="channel-group">${channel.group}</div>
+                row.innerHTML = `
+                    <div class="ch-num">${channel.id}</div>
+                    <img class="ch-logo" src="${channel.logo}" alt="" onerror="this.src='https://placehold.co/70x70/1e293b/fff?text=TV'">
+                    <div class="ch-details">
+                        <div class="ch-name">${channel.name}</div>
+                        <div class="ch-group">${channel.group}</div>
+                    </div>
                 `;
-                channelGrid.appendChild(card);
+                channelListContainer.appendChild(row);
             });
         }
 
-        // Change Channel Function
+        // Play Selected Channel
         function playChannel(channel) {
+            currentActiveId = channel.id;
+            
+            // Highlight current active row
+            document.querySelectorAll('.channel-row').forEach(r => r.classList.remove('active'));
+            const activeRow = document.getElementById(`ch-${channel.id}`);
+            if(activeRow) activeRow.classList.add('active');
+
+            // Change stream source
             player.src({
                 src: channel.url,
                 type: 'application/x-mpegURL'
             });
-            player.play();
-            currentPlayingText.innerText = `এখন চলছে: ${channel.name}`;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // Search and Filter Logic
-        function filterChannels() {
-            const searchTerm = searchBar.value.toLowerCase();
-            const selectedGroup = groupFilter.value;
-
-            const filtered = channels.filter(channel => {
-                const matchesSearch = channel.name.toLowerCase().includes(searchTerm);
-                const matchesGroup = selectedGroup === 'all' || channel.group === selectedGroup;
-                return matchesSearch && matchesGroup;
+            player.play().catch(error => {
+                console.log("Autoplay blocked or link broken.");
             });
 
-            displayChannels(filtered);
+            currentPlayingText.innerText = `এখন চলছে: ${channel.name} (${channel.group})`;
         }
 
-        // Event Listeners
+        // Search & Filter Handler
+        function filterChannels() {
+            const query = searchBar.value.toLowerCase();
+            const selectedGroup = groupFilter.value;
+
+            const filtered = channels.filter(ch => {
+                const matchSearch = ch.name.toLowerCase().includes(query);
+                const matchGroup = selectedGroup === 'all' || ch.group === selectedGroup;
+                return matchSearch && matchGroup;
+            });
+
+            renderChannels(filtered);
+        }
+
+        // Listeners
         searchBar.addEventListener('input', filterChannels);
         groupFilter.addEventListener('change', filterChannels);
 
-        // Initial Load 
-        displayChannels(channels);
-        // Play First Channel Default
-        playChannel(channels[0]);
-
+        // Run on Load
+        renderChannels(channels);
+        if(channels.length > 0) {
+            playChannel(channels[0]); // অটোমেটিক ১ম চ্যানেল প্লে হবে
+        }
     </script>
 </body>
 </html>
