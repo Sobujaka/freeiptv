@@ -30,44 +30,46 @@
         /* Top Header */
         header {
             background-color: var(--sidebar-bg);
-            padding: 12px 20px;
+            padding: 10px 20px;
             border-bottom: 1px solid #374151;
             display: flex;
             justify-content: space-between;
             align-items: center;
             height: 50px;
+            box-sizing: border-box;
         }
 
         header h1 {
             margin: 0;
-            font-size: 20px;
+            font-size: 18px;
             color: #60a5fa;
             font-weight: 600;
         }
 
-        /* Main Split Screen Layout */
+        /* App Container (সবসময় পাশাপাশি রাখার মূল ট্রিক) */
         .app-container {
             display: flex;
+            flex-direction: row; /* সবসময় পাশাপাশি থাকবে */
             flex: 1;
-            height: calc(100vh - 74px);
+            height: calc(100vh - 50px);
             overflow: hidden;
+            width: 100%;
         }
 
-        /* Left Side: Video Player */
+        /* Left Side: Video Player (৭০% জায়গা নেবে) */
         .player-side {
-            flex: 7; /* Takes 70% width */
+            flex: 7; 
             background-color: #000;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 20px;
+            padding: 15px;
             box-sizing: border-box;
-            position: relative;
         }
 
         .video-wrapper {
             width: 100%;
-            max-width: 1000px;
+            max-width: 950px;
             margin: 0 auto;
             aspect-ratio: 16 / 9;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
@@ -81,41 +83,42 @@
         }
 
         .current-title {
-            margin-top: 15px;
+            margin-top: 12px;
             text-align: center;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 500;
             color: var(--text-color);
         }
 
-        /* Right Side: Sidebar (Search + Filter + Channel List) */
+        /* Right Side: Sidebar (৩০% জায়গা নেবে) */
         .sidebar-side {
-            flex: 3; /* Takes 30% width */
+            flex: 3; 
             background-color: var(--sidebar-bg);
             border-left: 1px solid #374151;
             display: flex;
             flex-direction: column;
-            min-width: 320px;
+            min-width: 280px; /* সর্বনিম্ন সাইজ নিশ্চিত করার জন্য */
+            height: 100%;
         }
 
         /* Search area inside sidebar */
         .search-container {
-            padding: 15px;
+            padding: 12px;
             border-bottom: 1px solid #374151;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             background-color: rgba(0, 0, 0, 0.2);
         }
 
         .search-container input, .search-container select {
             width: 100%;
-            padding: 10px;
+            padding: 8px 12px;
             border-radius: 6px;
             border: 1px solid #4b5563;
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-size: 14px;
+            font-size: 13px;
             outline: none;
             box-sizing: border-box;
         }
@@ -128,30 +131,29 @@
         .channel-list {
             flex: 1;
             overflow-y: auto;
-            padding: 10px;
+            padding: 8px;
         }
 
-        /* Custom Scrollbar for channel list */
+        /* Custom Scrollbar */
         .channel-list::-webkit-scrollbar {
-            width: 6px;
+            width: 5px;
         }
         .channel-list::-webkit-scrollbar-thumb {
             background-color: #4b5563;
             border-radius: 4px;
         }
 
-        /* Vertical Channel Row/Card */
+        /* Channel Card Row */
         .channel-row {
             display: flex;
             align-items: center;
             background-color: var(--card-bg);
-            padding: 10px;
-            margin-bottom: 8px;
-            border-radius: 8px;
+            padding: 8px;
+            margin-bottom: 6px;
+            border-radius: 6px;
             cursor: pointer;
             transition: all 0.2s ease;
             border: 1px solid transparent;
-            position: relative;
         }
 
         .channel-row:hover {
@@ -160,25 +162,24 @@
         }
 
         .channel-row.active {
-            background-color: rgba(37, 99, 235, 0.2);
+            background-color: rgba(37, 99, 235, 0.25);
             border-color: var(--accent-color);
         }
 
         .ch-num {
             font-size: 11px;
             color: var(--text-muted);
-            min-width: 25px;
+            min-width: 20px;
             font-weight: bold;
         }
 
         .ch-logo {
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
             object-fit: contain;
             background-color: #111827;
-            border-radius: 6px;
-            margin-right: 12px;
-            padding: 2px;
+            border-radius: 4px;
+            margin-right: 10px;
         }
 
         .ch-details {
@@ -187,7 +188,7 @@
         }
 
         .ch-name {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
@@ -195,33 +196,9 @@
         }
 
         .ch-group {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        /* Responsive Layout for Mobile Screens */
-        @media (max-width: 900px) {
-            body {
-                overflow: auto;
-            }
-            .app-container {
-                flex-direction: column;
-                height: auto;
-                overflow: visible;
-            }
-            .player-side {
-                flex: none;
-                width: 100%;
-                padding: 10px;
-            }
-            .sidebar-side {
-                flex: none;
-                width: 100%;
-                height: 500px;
-                border-left: none;
-                border-top: 1px solid #374151;
-            }
+            margin-top: 1px;
         }
     </style>
 </head>
@@ -229,7 +206,7 @@
 
     <header>
         <h1>Live IPTV Stream</h1>
-        <div style="font-size: 12px; color: var(--text-muted);">Total Channels: <span id="totalCh">0</span></div>
+        <div style="font-size: 12px; color: var(--text-muted);">Channels: <span id="totalCh">0</span></div>
     </header>
 
     <div class="app-container">
@@ -246,7 +223,7 @@
         <div class="sidebar-side">
             
             <div class="search-container">
-                <input type="text" id="searchBar" placeholder="চ্যানেলের নাম লিখুন...">
+                <input type="text" id="searchBar" placeholder="চ্যানেল খুঁজুন...">
                 <select id="groupFilter">
                     <option value="all">সব ক্যাটাগরি</option>
                     <option value="Bangla">Bangla TV</option>
@@ -266,7 +243,6 @@
     <script src="https://vjs.zencdn.net/8.10.0/video.js"></script>
 
     <script>
-        // M3U ডেটাবেজ
         const channels = [
             { id: 1, name: "BTV", logo: "https://placehold.co/100x100/1e293b/fff?text=BTV", url: "https://owrcovcrpy.gpcdn.net/bpk-tv/1709/output/index.m3u8", group: "Bangla" },
             { id: 2, name: "Jamuna TV", logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUGV6AowX_8QpJuAchdiiAZzAFJYZGYhBzVQ&s", url: "https://owrcovcrpy.gpcdn.net/bpk-tv/1701/output/index.m3u8", group: "Bangla" },
@@ -298,28 +274,20 @@
         ];
 
         let currentActiveId = null;
+        const player = videojs('iptv-player', { fluid: true, controls: true });
 
-        // Initialize Video.js
-        const player = videojs('iptv-player', {
-            fluid: true,
-            autoplay: false,
-            controls: true
-        });
-
-        // DOM Elements
         const channelListContainer = document.getElementById('channelListContainer');
         const searchBar = document.getElementById('searchBar');
         const groupFilter = document.getElementById('groupFilter');
         const currentPlayingText = document.getElementById('currentPlaying');
         const totalChSpan = document.getElementById('totalCh');
 
-        // Render Sidebar Channels
         function renderChannels(list) {
             channelListContainer.innerHTML = "";
             totalChSpan.innerText = list.length;
 
             if(list.length === 0) {
-                channelListContainer.innerHTML = `<p style="text-align:center; padding: 20px; color:var(--text-muted);">কোনো চ্যানেল মেলেনি!</p>`;
+                channelListContainer.innerHTML = `<p style="text-align:center; padding: 20px; color:var(--text-muted); font-size:13px;">কোনো চ্যানেল পাওয়া যায়নি!</p>`;
                 return;
             }
 
@@ -327,7 +295,6 @@
                 const row = document.createElement('div');
                 row.className = `channel-row ${channel.id === currentActiveId ? 'active' : ''}`;
                 row.id = `ch-${channel.id}`;
-                
                 row.onclick = () => playChannel(channel);
 
                 row.innerHTML = `
@@ -342,28 +309,18 @@
             });
         }
 
-        // Play Selected Channel
         function playChannel(channel) {
             currentActiveId = channel.id;
-            
-            // Highlight current active row
             document.querySelectorAll('.channel-row').forEach(r => r.classList.remove('active'));
             const activeRow = document.getElementById(`ch-${channel.id}`);
             if(activeRow) activeRow.classList.add('active');
 
-            // Change stream source
-            player.src({
-                src: channel.url,
-                type: 'application/x-mpegURL'
-            });
-            player.play().catch(error => {
-                console.log("Autoplay blocked or link broken.");
-            });
+            player.src({ src: channel.url, type: 'application/x-mpegURL' });
+            player.play().catch(() => console.log("Playback error or link dead."));
 
-            currentPlayingText.innerText = `এখন চলছে: ${channel.name} (${channel.group})`;
+            currentPlayingText.innerText = `এখন চলছে: ${channel.name}`;
         }
 
-        // Search & Filter Handler
         function filterChannels() {
             const query = searchBar.value.toLowerCase();
             const selectedGroup = groupFilter.value;
@@ -373,19 +330,15 @@
                 const matchGroup = selectedGroup === 'all' || ch.group === selectedGroup;
                 return matchSearch && matchGroup;
             });
-
             renderChannels(filtered);
         }
 
-        // Listeners
         searchBar.addEventListener('input', filterChannels);
         groupFilter.addEventListener('change', filterChannels);
 
-        // Run on Load
+        // Initial Start
         renderChannels(channels);
-        if(channels.length > 0) {
-            playChannel(channels[0]); // অটোমেটিক ১ম চ্যানেল প্লে হবে
-        }
+        if(channels.length > 0) playChannel(channels[0]);
     </script>
 </body>
 </html>
