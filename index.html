@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive IPTV Player with Fixed Channel Numbers</title>
+    <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        body { background: #141414; color: #ffffff; padding: 15px; }
+        
+        /* Controls Layout */
+        .controls-container {
+            display: table;
+            width: 100%;
+            margin-bottom: 15px;
+            border-spacing: 10px 0;
+        }
+        .search-box-cell {
+            display: table-cell;
+            width: 50%;
+        }
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #333;
+            border-radius: 6px;
+            background: #222;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+        .search-input:focus { border-color: #007bff; }
+
+        /* Main Container - Desktop Table Layout */
+        .iptv-main {
+            display: table;
+            width: 100%;
+            height: 80vh;
+            min-height: 480px;
+            border-spacing: 15px 0;
+        }
+        
+        .player-cell {
+            display: table-cell;
+            width: 65%;
+            vertical-align: top;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .list-cell {
+            display: table-cell;
+            width: 35%;
+            vertical-align: top;
+            background: #1f1f1f;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        /* Fixed Heights for Video and List Content */
+        .video-wrapper {
+            position: absolute;
+            top: 0; bottom: 0; left: 0; right: 0;
+        }
+        .video-js { width: 100% !important; height: 100% !important; }
+
+        .list-wrapper {
+            height: 80vh;
+            min-height: 480px;
+            overflow-y: auto;
+        }
+        
+        /* Channel Row Layout */
+        .channel-item {
+            display: table;
+            width: 100%;
+            padding: 10px 12px;
+            border-bottom: 1px solid #2d2d2d;
+            cursor: pointer;
+        }
+        .channel-item:hover { background: #2a2a2a; }
+        .channel-item.active { background: #007bff; }
+        
+        .ch-col-num {
+            display: table-cell;
+            width: 45px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #007bff;
+            vertical-align: middle;
+        }
+        .channel-item.active .ch-col-num { color: #fff; }
+        
+        .ch-col-logo {
+            display: table-cell;
+            width: 40px;
+            vertical-align: middle;
+        }
+        .ch-logo {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            border-radius: 4px;
+            background: #000;
+            display: block;
+        }
+        
+        .ch-col-name {
+            display: table-cell;
+            vertical-align: middle;
+            padding-left: 10px;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Mobile & Tablet Responsive Layout Rules */
+        @media (max-width: 768px) {
+            .controls-container, .search-box-cell { display: block; width: 100%; }
+            .search-box-cell:first-child { margin-bottom: 10px; }
+            
+            .iptv-main, .player-cell, .list-cell { display: block; width: 100%; height: auto; }
+            .player-cell { height: 240px; margin-bottom: 15px; }
+            .video-wrapper { position: relative; height: 240px; }
+            .list-wrapper { height: 400px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls-container">
+        <div class="search-box-cell">
+            <input type="text" id="searchChannel" class="search-input" placeholder="চ্যানেল নাম বা নম্বর দিয়ে খুঁজুন...">
+        </div>
+        <div class="search-box-cell">
+            <input type="text" id="searchGroup" class="search-input" placeholder="গ্রুপ বা ক্যাটাগরি দিয়ে খুঁজুন...">
+        </div>
+    </div>
+
+    <div class="iptv-main">
+        <div class="player-cell">
+            <div class="video-wrapper">
+                <video id="my-video" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto" data-setup="{}">
+                    <p class="vjs-no-js">ভিডিও দেখার জন্য জাভাস্ক্রিপ্ট সচল করুন।</p>
+                </video>
+            </div>
+        </div>
+
+        <div class="list-cell">
+            <div class="list-wrapper" id="channelList">
+                <div style="padding:20px; text-align:center; color:#aaa;">চ্যানেল লোড হচ্ছে...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://vjs.zencdn.net/7.20.3/video.js"></script>
+    <script>
+        // 📢 আপনার GitHub থেকে পাওয়া Raw M3U লিঙ্কটি এখানে দিন
+        const m3uUrl = "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/channels.m3u"; 
+
+        let allChannels = [];
+        const player = videojs('my-video');
+
+        async function fetchM3U() {
+            try {
+                const response = await fetch(m3uUrl);
+                const data = await response.text();
+                parseM3U(data);
+            } catch (error) {
+                document.getElementById('channelList').innerHTML = `<div style="padding:20px; color:#ff4d4d; text-align:center;">চ্যানেল লোড করতে ব্যর্থ হয়েছে! লিঙ্কটি যাচাই করুন।</div>`;
+            }
+        }
+
+        function parseM3U(data) {
+            const lines = data.split('\n');
+            let channels = [];
+            let currentCh = {};
+            let autoCount = 1;
+
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+                if (line.startsWith('#EXTINF:')) {
+                    currentCh = {};
+                    
+                    // লিংক থেকে নির্দিষ্ট নম্বর (tvg-chno অথবা tvg-id) ডিটেক্ট করার লজিক
+                    const chNoMatch = line.match(/tvg-chno="([^"]+)"/) || line.match(/tvg-id="([^"]+)"/);
+                    const logoMatch = line.match(/tvg-logo="([^"]+)"/);
+                    const groupMatch = line.match(/group-title="([^"]+)"/);
+                    const nameMatch = line.split(',')[1];
+
+                    // নম্বর ডিটেক্ট হলে সেট করবে, না হলে অটো সিরিয়াল বসাবে
+                    if (chNoMatch && !isNaN(chNoMatch[1])) {
+                        currentCh.number = parseInt(chNoMatch[1]);
+                    } else {
+                        currentCh.number = autoCount++;
+                    }
+
+                    currentCh.logo = logoMatch ? logoMatch[1] : 'https://via.placeholder.com/32?text=TV';
+                    currentCh.group = groupMatch ? groupMatch[1].toLowerCase() : '';
+                    currentCh.name = nameMatch ? nameMatch.trim() : 'Unknown Channel';
+                } else if (line.startsWith('http')) {
+                    currentCh.url = line;
+                    channels.push(currentCh);
+                    currentCh = {};
+                }
+            }
+
+            // চ্যানেল নম্বর অনুযায়ী ছোট থেকে বড় (Ascending Order) ক্রমানুসারে সাজানো
+            channels.sort((a, b) => a.number - b.number);
+            
+            allChannels = channels;
+            renderChannels(allChannels);
+            
+            if(allChannels.length > 0) playChannel(allChannels[0].url, document.getElementsByClassName('channel-item')[0]);
+        }
+
+        function renderChannels(channels) {
+            const container = document.getElementById('channelList');
+            container.innerHTML = '';
+            
+            if(channels.length === 0) {
+                container.innerHTML = `<div style="padding:20px; text-align:center; color:#aaa;">কোনো চ্যানেল পাওয়া যায়নি!</div>`;
+                return;
+            }
+
+            channels.forEach((ch) => {
+                const item = document.createElement('div');
+                item.className = 'channel-item';
+                item.innerHTML = `
+                    <div class="ch-col-num">${ch.number}</div>
+                    <div class="ch-col-logo">
+                        <img class="ch-logo" src="${ch.logo}" onerror="this.src='https://via.placeholder.com/32?text=TV'">
+                    </div>
+                    <div class="ch-col-name">${ch.name}</div>
+                `;
+                item.onclick = () => playChannel(ch.url, item);
+                container.appendChild(item);
+            });
+        }
+
+        function playChannel(url, element) {
+            player.src({ src: url, type: 'application/x-mpegURL' });
+            player.play();
+            
+            document.querySelectorAll('.channel-item').forEach(el => el.classList.remove('active'));
+            if(element) element.className += ' active';
+        }
+
+        function filterChannels() {
+            const searchVal = document.getElementById('searchChannel').value.toLowerCase();
+            const groupVal = document.getElementById('searchGroup').value.toLowerCase();
+
+            const filtered = allChannels.filter(ch => {
+                const matchNameOrNum = ch.name.toLowerCase().includes(searchVal) || ch.number.toString() === searchVal;
+                const matchGroup = ch.group.includes(groupVal);
+                return matchNameOrNum && matchGroup;
+            });
+            renderChannels(filtered);
+        }
+
+        document.getElementById('searchChannel').addEventListener('input', filterChannels);
+        document.getElementById('searchGroup').addEventListener('input', filterChannels);
+
+        // ডাটা ফেচ শুরু করা
+        fetchM3U();
+    </script>
+</body>
+</html>
