@@ -1,8 +1,8 @@
 #EXTM3U
 #EXTINF:-1 tvg-chno="1" tvg-logo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMr5Vso0imMvRabkLuRt3mzrpnx8ZMsUGqm8OnV4XUDA&s=10" group-title="news", channel 1
 https://owrcovcrpy.gpcdn.net/bpk-tv/1702/output/index.m3u8
-#EXTINF:-1 tvg-chno="" tvg-logo="" group-title="",
-
+#EXTINF:-1 tvg-chno="2" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1735560213832.png" group-title="news/other",Jamuna TV
+https://owrcovcrpy.gpcdn.net/bpk-tv/1701/output/index.m3u8
 #EXTINF:-1 tvg-chno="" tvg-logo="" group-title="",
 
 #EXTINF:-1 tvg-chno="" tvg-logo="" group-title="",
