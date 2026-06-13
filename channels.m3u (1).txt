@@ -3,8 +3,8 @@
 https://owrcovcrpy.gpcdn.net/bpk-tv/1702/output/index.m3u8
 #EXTINF:-1 tvg-chno="2" tvg-logo="https://yt3.googleusercontent.com/5Nt4po1KcuS5IwrAUVJQxb5zv8URdMrs9CZ4R_QcIe78rNRAbn8qQ9Mpco1bYQ8E2ghaO9so-hs=s900-c-k-c0x00ffffff-no-rj" group-title="news/other",Jamuna TV
 https://owrcovcrpy.gpcdn.net/bpk-tv/1701/output/index.m3u8
-#EXTINF:-1 tvg-chno="" tvg-logo="" group-title="",
-
+#EXTINF:-1 tvg-chno="" tvg-logo="https://tstatic.akash-go.com/cms-ui/images/custom-content/1735561344354.png" group-title="all",Bangla Vision
+https://owrcovcrpy.gpcdn.net/bpk-tv/1715/output/index.m3u8
 #EXTINF:-1 tvg-chno="" tvg-logo="" group-title="",
 
 #EXTINF:-1 tvg-chno="" tvg-logo="" group-title="",
